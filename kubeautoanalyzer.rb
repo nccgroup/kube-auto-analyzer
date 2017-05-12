@@ -95,6 +95,8 @@ class KubernetesAnalyzer
       exit
     end
     test_api_server
+    test_scheduler
+    test_controller_manager
     report
     if @options.html_report
       html_report
@@ -313,11 +315,81 @@ class KubernetesAnalyzer
       @results[target]['api_server']['CIS 1.1.31 - Ensure that the --etcd-cafile argument is set as appropriate'] = "Pass"
     end
 
-    @results[target]['evidence']['api_server'] = api_server_command_line
+    @results[target]['evidence']['API Server'] = api_server_command_line
   end
 
   def test_scheduler
+    target = @options.target_server
+    @results[target]['scheduler'] = Hash.new
+    pods = @client.get_pods
+    pods.each do |pod| 
+      #Ok this is a bit naive as a means of hitting the API server but hey it's a start
+      if pod['metadata']['name'] =~ /kube-scheduler/
+        @scheduler = pod
+      end
+    end
     
+    scheduler_command_line = @scheduler['spec']['containers'][0]['command']
+
+    unless scheduler_command_line.index{|line| line =~ /--profiling=false/}
+      @results[target]['scheduler']['CIS 1.2.1 - Ensure that the --profiling argument is set to false'] = "Fail"
+    else
+      @results[target]['scheduler']['CIS 1.2.1 - Ensure that the --profiling argument is set to false'] = "Pass"
+    end  
+    @results[target]['evidence']['Scheduler'] = scheduler_command_line
+  end
+
+  def test_controller_manager
+    target = @options.target_server
+    @results[target]['controller_manager'] = Hash.new
+    pods = @client.get_pods
+    pods.each do |pod| 
+      #Ok this is a bit naive as a means of hitting the API server but hey it's a start
+      if pod['metadata']['name'] =~ /kube-controller-manager/
+        @scheduler = pod
+      end
+    end
+    
+    controller_manager_command_line = @scheduler['spec']['containers'][0]['command']
+
+    unless controller_manager_command_line.index{|line| line =~ /--terminated-pod-gc-threshold/}
+      @results[target]['controller_manager']['CIS 1.3.1 - Ensure that the --terminated-pod-gc-threshold argument is set as appropriate'] = "Fail"
+    else
+      @results[target]['controller_manager']['CIS 1.3.1 - Ensure that the --terminated-pod-gc-threshold argument is set as appropriate'] = "Pass"
+    end 
+
+    unless controller_manager_command_line.index{|line| line =~ /--profiling=false/}
+      @results[target]['controller_manager']['CIS 1.3.2 - Ensure that the --profiling argument is set to false'] = "Fail"
+    else
+      @results[target]['controller_manager']['CIS 1.3.2 - Ensure that the --profiling argument is set to false'] = "Pass"
+    end  
+
+    if controller_manager_command_line.index{|line| line =~ /--insecure-experimental-approve-all-kubelet-csrs-for-group/}
+      @results[target]['controller_manager']['CIS 1.3.3 - Ensure that the --insecure-experimental-approve-all-kubelet-csrs-for-group argument is not set'] = "Fail"
+    else
+      @results[target]['controller_manager']['CIS 1.3.3 - Ensure that the --insecure-experimental-approve-all-kubelet-csrs-for-group argument is not set'] = "Pass"
+    end  
+
+    unless controller_manager_command_line.index{|line| line =~ /--use-service-account-credentials=true/}
+      @results[target]['controller_manager']['CIS 1.3.4 - Ensure that the --use-service-account-credentials argument is set to true'] = "Fail"
+    else
+      @results[target]['controller_manager']['CIS 1.3.4 - Ensure that the --use-service-account-credentials argument is set to true'] = "Pass"
+    end 
+
+    unless controller_manager_command_line.index{|line| line =~ /--service-account-private-key-file/}
+      @results[target]['controller_manager']['CIS 1.3.5 - Ensure that the --service-account-private-key-file argument is set as appropriate'] = "Fail"
+    else
+      @results[target]['controller_manager']['CIS 1.3.5 - Ensure that the --service-account-private-key-file argument is set as appropriate'] = "Pass"
+    end 
+
+    unless controller_manager_command_line.index{|line| line =~ /--root-ca-file/}
+      @results[target]['controller_manager']['CIS 1.3.6 - Ensure that the --root-ca-file argument is set as appropriate'] = "Fail"
+    else
+      @results[target]['controller_manager']['CIS 1.3.6 - Ensure that the --root-ca-file argument is set as appropriate'] = "Pass"
+    end 
+
+    @results[target]['evidence']['Controller Manager'] = controller_manager_command_line
+
   end
 
   def report
@@ -329,9 +401,25 @@ class KubernetesAnalyzer
     @results[@options.target_server]['api_server'].each do |test, result|
       @report_file.puts '* ' + test + ' - **' + result + '**'
     end
+    @report_file.puts "\n\nScheduler Results"
+    @report_file.puts "----------------------\n\n"
+    @results[@options.target_server]['scheduler'].each do |test, result|
+      @report_file.puts '* ' + test + ' - **' + result + '**'
+    end
+
+    @report_file.puts "\n\nController Manager Results"
+    @report_file.puts "----------------------\n\n"
+    @results[@options.target_server]['controller_manager'].each do |test, result|
+      @report_file.puts '* ' + test + ' - **' + result + '**'
+    end
+
     @report_file.puts "\n\nEvidence"
     @report_file.puts "---------------\n\n"
-    @report_file.puts '    ' + @results[@options.target_server]['evidence']['api_server'].to_s
+    @report_file.puts '    ' + @results[@options.target_server]['evidence']['API Server'].to_s
+    @report_file.puts "---------------\n\n"
+    @report_file.puts '    ' + @results[@options.target_server]['evidence']['Scheduler'].to_s
+    @report_file.puts "---------------\n\n"
+    @report_file.puts '    ' + @results[@options.target_server]['evidence']['Controller Manager'].to_s
     @report_file.close
   end
 
@@ -387,15 +475,56 @@ class KubernetesAnalyzer
         padding: 6px 6px 6px 12px;
         color: #4f6b72;
       }
-      td.alt {
-        background: #F5FAFA;
-        color: #797268;
-      }
     </style>
   </head>
   <body>
+  <h1>Kubernetes Analyzer</h1>
     '
-    @html_report_file.puts report.to_html
+    @html_report_file.puts "<br><br><b>Server Reviewed : </b> #{@options.target_server}"
+    @html_report_file.puts "<br><br><h2>API Server Results</h2><br>"
+    @html_report_file.puts "<table><thead><tr><th>Check</th><th>result</th></tr></thead>"
+    @results[@options.target_server]['api_server'].each do |test, result|      
+      if result == "Fail"
+        result = '<span style="color:red;">Fail</span>'
+      elsif result == "Pass"
+        result = '<span style="color:green;">Pass</span>'
+      end
+      @html_report_file.puts "<tr><td>#{test}</td><td>#{result}</td></tr>"
+    end
+    @html_report_file.puts "</table>"
+    @html_report_file.puts "<br><br>"
+    @html_report_file.puts "<br><br><h2>Scheduler Results</h2><br>"
+    @html_report_file.puts "<table><thead><tr><th>Check</th><th>result</th></tr></thead>"
+    @results[@options.target_server]['scheduler'].each do |test, result|      
+      if result == "Fail"
+        result = '<span style="color:red;">Fail</span>'
+      elsif result == "Pass"
+        result = '<span style="color:green;">Pass</span>'
+      end
+      @html_report_file.puts "<tr><td>#{test}</td><td>#{result}</td></tr>"
+    end
+    @html_report_file.puts "</table>"
+
+    @html_report_file.puts "<br><br>"
+    @html_report_file.puts "<br><br><h2>Controller Manager Results</h2><br>"
+    @html_report_file.puts "<table><thead><tr><th>Check</th><th>result</th></tr></thead>"
+    @results[@options.target_server]['controller_manager'].each do |test, result|      
+      if result == "Fail"
+        result = '<span style="color:red;">Fail</span>'
+      elsif result == "Pass"
+        result = '<span style="color:green;">Pass</span>'
+      end
+      @html_report_file.puts "<tr><td>#{test}</td><td>#{result}</td></tr>"
+    end
+    @html_report_file.puts "</table>"
+
+
+
+    @html_report_file.puts "<br><br><h2>Evidence</h2><br><br>"
+    @html_report_file.puts "<table><thead><tr><th>Area</th><th>Output</th></tr></thead>"
+    @results[@options.target_server]['evidence'].each do |area, output|
+      @html_report_file.puts "<tr><td>#{area}</td><td>#{output}</td></tr>"
+    end
     @html_report_file.puts '</body></html>'
   end
 
