@@ -208,9 +208,116 @@ class KubernetesAnalyzer
       @results[target]['api_server']['CIS 1.1.14 - Ensure that the admission control policy is set to SecurityContextDeny'] = "Pass"
     end
 
+    unless api_server_command_line.index{|line| line =~ /--admission-control\S*NamespaceLifecycle/}
+      @results[target]['api_server']['CIS 1.1.15 - Ensure that the admission control policy is set to NamespaceLifecycle'] = "Fail"
+    else
+      @results[target]['api_server']['CIS 1.1.15 - Ensure that the admission control policy is set to NamespaceLifecycle'] = "Pass"
+    end
 
+    unless api_server_command_line.index{|line| line =~ /--audit-log-path/}
+      @results[target]['api_server']['CIS 1.1.16 - Ensure that the --audit-log-path argument is set as appropriate'] = "Fail"
+    else
+      @results[target]['api_server']['CIS 1.1.16 - Ensure that the --audit-log-path argument is set as appropriate'] = "Pass"
+    end
+
+    #TODO: This check needs to do something with the number of days but for now lets just check whether it's present.
+    unless api_server_command_line.index{|line| line =~ /--audit-log-maxage/}
+      @results[target]['api_server']['CIS 1.1.17 - Ensure that the --audit-log-maxage argument is set to 30 or as appropriate'] = "Fail"
+    else
+      @results[target]['api_server']['CIS 1.1.17 - Ensure that the --audit-log-maxage argument is set to 30 or as appropriate'] = "Pass"
+    end
+
+    #TODO: This check needs to do something with the number of backups but for now lets just check whether it's present.
+    unless api_server_command_line.index{|line| line =~ /--audit-log-maxbackup/}
+      @results[target]['api_server']['CIS 1.1.18 - Ensure that the --audit-log-maxbackup argument is set to 10 or as appropriate'] = "Fail"
+    else
+      @results[target]['api_server']['CIS 1.1.18 - Ensure that the --audit-log-maxbackup argument is set to 10 or as appropriate'] = "Pass"
+    end
+
+    #TODO: This check needs to do something with the size of backups but for now lets just check whether it's present.
+    unless api_server_command_line.index{|line| line =~ /--audit-log-maxsize/}
+      @results[target]['api_server']['CIS 1.1.19 - Ensure that the --audit-log-maxsize argument is set to 100 or as appropriate'] = "Fail"
+    else
+      @results[target]['api_server']['CIS 1.1.19 - Ensure that the --audit-log-maxsize argument is set to 100 or as appropriate'] = "Pass"
+    end
+
+    if api_server_command_line.index{|line| line =~ /--authorization-mode\S*AlwaysAllow/}
+      @results[target]['api_server']['CIS 1.1.20 - Ensure that the --authorization-mode argument is not set to AlwaysAllow'] = "Fail"
+    else
+      @results[target]['api_server']['CIS 1.1.20 - Ensure that the --authorization-mode argument is not set to AlwaysAllow'] = "Pass"
+    end
+
+    if api_server_command_line.index{|line| line =~ /--token-auth-file/}
+      @results[target]['api_server']['CIS 1.1.21 - Ensure that the --token-auth-file argument is not set'] = "Fail"
+    else
+      @results[target]['api_server']['CIS 1.1.21 - Ensure that the --token-auth-file argument is not set'] = "Pass"
+    end
+
+    unless api_server_command_line.index{|line| line =~ /--kubelet-certificate-authority/}
+      @results[target]['api_server']['CIS 1.1.22 - Ensure that the --kubelet-certificate-authority argument is set as appropriate'] = "Fail"
+    else
+      @results[target]['api_server']['CIS 1.1.22 - Ensure that the --kubelet-certificate-authority argument is set as appropriate'] = "Pass"
+    end
+
+    unless (api_server_command_line.index{|line| line =~ /--kubelet-client-certificate/} && api_server_command_line.index{|line| line =~ /--kubelet-client-key/})
+      @results[target]['api_server']['CIS 1.1.23 - Ensure that the --kubelet-client-certificate and --kubelet-client-key arguments are set as appropriate'] = "Fail"
+    else
+      @results[target]['api_server']['CIS 1.1.23 - Ensure that the --kubelet-client-certificate and --kubelet-client-key arguments are set as appropriate'] = "Pass"
+    end
+
+    unless api_server_command_line.index{|line| line =~ /--service-account-lookup=true/}
+      @results[target]['api_server']['CIS 1.1.24 - Ensure that the --service-account-lookup argument is set to true'] = "Fail"
+    else
+      @results[target]['api_server']['CIS 1.1.24 - Ensure that the --service-account-lookup argument is set to true'] = "Pass"
+    end
+
+    unless api_server_command_line.index{|line| line =~ /--admission-control\S*PodSecurityPolicy/}
+      @results[target]['api_server']['CIS 1.1.25 - Ensure that the admission control policy is set to PodSecurityPolicy'] = "Fail"
+    else
+      @results[target]['api_server']['CIS 1.1.25 - Ensure that the admission control policy is set to PodSecurityPolicy'] = "Pass"
+    end
+
+    unless api_server_command_line.index{|line| line =~ /--service-account-key-file/}
+      @results[target]['api_server']['CIS 1.1.26 - Ensure that the --service-account-key-file argument is set as appropriate'] = "Fail"
+    else
+      @results[target]['api_server']['CIS 1.1.26 - Ensure that the --service-account-key-file argument is set as appropriate'] = "Pass"
+    end
+
+    unless (api_server_command_line.index{|line| line =~ /--etcd-certfile/} && api_server_command_line.index{|line| line =~ /--etcd-keyfile/})
+      @results[target]['api_server']['CIS 1.1.27 - Ensure that the --etcd-certfile and --etcd-keyfile arguments are set as appropriate'] = "Fail"
+    else
+      @results[target]['api_server']['CIS 1.1.27 - Ensure that the --etcd-certfile and --etcd-keyfile arguments are set as appropriate'] = "Pass"
+    end
+
+    unless api_server_command_line.index{|line| line =~ /--admission-control\S*ServiceAccount/}
+      @results[target]['api_server']['CIS 1.1.28 - Ensure that the admission control policy is set to ServiceAccount'] = "Fail"
+    else
+      @results[target]['api_server']['CIS 1.1.28 - Ensure that the admission control policy is set to ServiceAccount'] = "Pass"
+    end
+
+    unless (api_server_command_line.index{|line| line =~ /--tls-cert-file/} && api_server_command_line.index{|line| line =~ /--tls-private-key-file/})
+      @results[target]['api_server']['CIS 1.1.29 - Ensure that the --tls-cert-file and --tls-private-key-file arguments are set as appropriate'] = "Fail"
+    else
+      @results[target]['api_server']['CIS 1.1.29 - Ensure that the --tls-cert-file and --tls-private-key-file arguments are set as appropriate'] = "Pass"
+    end
+
+    unless api_server_command_line.index{|line| line =~ /--client-ca-file/}
+      @results[target]['api_server']['CIS 1.1.30 - Ensure that the --client-ca-file argument is set as appropriate'] = "Fail"
+    else
+      @results[target]['api_server']['CIS 1.1.30 - Ensure that the --client-ca-file argument is set as appropriate'] = "Pass"
+    end
+
+    unless api_server_command_line.index{|line| line =~ /--etcd-cafile/}
+      @results[target]['api_server']['CIS 1.1.31 - Ensure that the --etcd-cafile argument is set as appropriate'] = "Fail"
+    else
+      @results[target]['api_server']['CIS 1.1.31 - Ensure that the --etcd-cafile argument is set as appropriate'] = "Pass"
+    end
 
     @results[target]['evidence']['api_server'] = api_server_command_line
+  end
+
+  def test_scheduler
+    
   end
 
   def report
