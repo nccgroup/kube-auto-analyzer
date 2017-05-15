@@ -97,6 +97,7 @@ class KubernetesAnalyzer
     test_api_server
     test_scheduler
     test_controller_manager
+    test_etcd
     report
     if @options.html_report
       html_report
@@ -392,6 +393,63 @@ class KubernetesAnalyzer
 
   end
 
+  def test_etcd
+    target = @options.target_server
+    @results[target]['etcd'] = Hash.new
+    pods = @client.get_pods
+    pods.each do |pod| 
+      #Ok this is a bit naive as a means of hitting the API server but hey it's a start
+      if pod['metadata']['name'] =~ /etcd/
+        @etcd = pod
+      end
+    end
+    
+    etcd_command_line = @etcd['spec']['containers'][0]['command']
+
+    unless (etcd_command_line.index{|line| line =~ /--cert-file/} && etcd_command_line.index{|line| line =~ /--key-file/})
+      @results[target]['etcd']['CIS 1.5.1 - Ensure that the --cert-file and --key-file arguments are set as appropriate'] = "Fail"
+    else
+      @results[target]['etcd']['CIS 1.5.1 - Ensure that the --cert-file and --key-file arguments are set as appropriate'] = "Pass"
+    end 
+
+    unless etcd_command_line.index{|line| line =~ /--client-cert-auth=true/}
+      @results[target]['etcd']['CIS 1.5.2 - Ensure that the --client-cert-auth argument is set to true'] = "Fail"
+    else
+      @results[target]['etcd']['CIS 1.5.2 - Ensure that the --client-cert-auth argument is set to true'] = "Pass"
+    end
+
+    if etcd_command_line.index{|line| line =~ /--auto-tls argument=true/}
+      @results[target]['etcd']['CIS 1.5.3 - Ensure that the --auto-tls argument is not set to true'] = "Fail"
+    else
+      @results[target]['etcd']['CIS 1.5.3 - Ensure that the --auto-tls argument is not set to true'] = "Pass"
+    end
+
+    unless (etcd_command_line.index{|line| line =~ /--peer-cert-file/} && etcd_command_line.index{|line| line =~ /--peer-key-file/})
+      @results[target]['etcd']['CIS 1.5.4 - Ensure that the --peer-cert-file and --peer-key-file arguments are set as appropriate'] = "Fail"
+    else
+      @results[target]['etcd']['CIS 1.5.4 - Ensure that the --peer-cert-file and --peer-key-file arguments are set as appropriate'] = "Pass"
+    end 
+
+    unless etcd_command_line.index{|line| line =~ /--peer-client-cert-auth=true/}
+      @results[target]['etcd']['CIS 1.5.5 - Ensure that the --peer-client-cert-auth argument is set to true'] = "Fail"
+    else
+      @results[target]['etcd']['CIS 1.5.5 - Ensure that the --peer-client-cert-auth argument is set to true'] = "Pass"
+    end
+
+    if etcd_command_line.index{|line| line =~ /--peer-auto-tls argument=true/}
+      @results[target]['etcd']['CIS 1.5.6 - Ensure that the --peer-auto-tls argument is not set to true'] = "Fail"
+    else
+      @results[target]['etcd']['CIS 1.5.6 - Ensure that the --peer-auto-tls argument is not set to true'] = "Pass"
+    end
+
+
+
+    @results[target]['evidence']['etcd'] = etcd_command_line
+  end
+
+
+
+
   def report
     @report_file.puts "Kubernetes Analyzer"
     @report_file.puts "===================\n\n"
@@ -413,6 +471,12 @@ class KubernetesAnalyzer
       @report_file.puts '* ' + test + ' - **' + result + '**'
     end
 
+    @report_file.puts "\n\netcd Results"
+    @report_file.puts "----------------------\n\n"
+    @results[@options.target_server]['etcd'].each do |test, result|
+      @report_file.puts '* ' + test + ' - **' + result + '**'
+    end
+
     @report_file.puts "\n\nEvidence"
     @report_file.puts "---------------\n\n"
     @report_file.puts '    ' + @results[@options.target_server]['evidence']['API Server'].to_s
@@ -420,6 +484,8 @@ class KubernetesAnalyzer
     @report_file.puts '    ' + @results[@options.target_server]['evidence']['Scheduler'].to_s
     @report_file.puts "---------------\n\n"
     @report_file.puts '    ' + @results[@options.target_server]['evidence']['Controller Manager'].to_s
+    @report_file.puts "---------------\n\n"
+    @report_file.puts '    ' + @results[@options.target_server]['evidence']['etcd'].to_s
     @report_file.close
   end
 
@@ -518,7 +584,18 @@ class KubernetesAnalyzer
     end
     @html_report_file.puts "</table>"
 
-
+    @html_report_file.puts "<br><br>"
+    @html_report_file.puts "<br><br><h2>etcd Results</h2><br>"
+    @html_report_file.puts "<table><thead><tr><th>Check</th><th>result</th></tr></thead>"
+    @results[@options.target_server]['etcd'].each do |test, result|      
+      if result == "Fail"
+        result = '<span style="color:red;">Fail</span>'
+      elsif result == "Pass"
+        result = '<span style="color:green;">Pass</span>'
+      end
+      @html_report_file.puts "<tr><td>#{test}</td><td>#{result}</td></tr>"
+    end
+    @html_report_file.puts "</table>"
 
     @html_report_file.puts "<br><br><h2>Evidence</h2><br><br>"
     @html_report_file.puts "<table><thead><tr><th>Area</th><th>Output</th></tr></thead>"
