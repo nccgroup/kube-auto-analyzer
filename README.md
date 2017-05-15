@@ -16,25 +16,23 @@ One of the challenges with scripting these checks is that there are many differe
 
 ### Master Node Security Configuration
 
-Section 1.1 - API Server - All Checks Implemented (31)
-Section 1.2 - Scheduler - All Checks Implemented (1)
-Section 1.3 - Controller Manager - All Checks Implemented (6)
-Section 1.4 - Configuration Files - TBC (need separate logic to access filesystems and check permissions)
-Section 1.5 - etcd - All Checks Implemented (6)
-Section 1.6 - General Security Primitives - Not implementing directly.  These checks are unscored so not really suitable for automated scanning.
+ - Section 1.1 - API Server - All Checks Implemented (31)
+ - Section 1.2 - Scheduler - All Checks Implemented (1)
+ - Section 1.3 - Controller Manager - All Checks Implemented (6)
+ - Section 1.4 - Configuration Files - TBC (need separate logic to access filesystems and check permissions)
+ - Section 1.5 - etcd - All Checks Implemented (6)
+ - Section 1.6 - General Security Primitives - Not implementing directly.  These checks are unscored so not really suitable for automated scanning.
 
 ### Worker Node Security Configuration
 
-Section 2.1 - API Config - TBC
-Section 2.2 - Configuration Files - TBC (need separate logic to access filesystems and check permissions)
+ - Section 2.1 - API Config - TBC
+ - Section 2.2 - Configuration Files - TBC (need separate logic to access filesystems and check permissions)
 
 ### Federated Deployments
 
-Section 3.1 - Federation API Server - TBC
-Section 3.2 - Federation Controller Manager - TBC
+ - Section 3.1 - Federation API Server - TBC
+ - Section 3.2 - Federation Controller Manager - TBC
 
-
-###
 
 ## Tested With
 
