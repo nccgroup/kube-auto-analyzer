@@ -27,11 +27,7 @@ module KubeAutoAnalyzer
     @report_file = File.new(@report_file_name + '.txt','w+')
     @html_report_file = File.new(@report_file_name + '.html','w+')
     @log.debug("New Report File created #{@report_file_name}")
-    run
-  end
-
-  def self.run
-    @log.debug("Entering the run method")
+        
     @results = Hash.new
     #TODO: Expose this as an option rather than hard-code to off
     unless @options.config_file
@@ -73,9 +69,7 @@ module KubeAutoAnalyzer
     test_controller_manager
     test_etcd
     report
-    if @options.html_report
-      html_report
-    end
+    html_report
   end
 
   def self.test_api_server
