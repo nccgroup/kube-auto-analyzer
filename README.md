@@ -40,12 +40,22 @@ One of the challenges with scripting these checks is that there are many differe
 
 ## Usage
 
+First up you'll need to install the gem.  Until it's in rubygems use
+
+`gem build kube_auto_analyzer.gemspec`
+
+then
+
+`gem install kube_auto_analyzer-0.0.1.gem`
+
+and that should put the kubeautoanalyzer command onto your path (assuming you have a sane ruby setup!)
+
 The best way to use the tool is to provide it a KUBECONFIG file to identify and authenticate the session.  in that event you can run it with
 
-`kubeautoanalyzer.rb -c <kubeconfig_file_name> -r <report_name>`
+`kubeautoanalyzer -c <kubeconfig_file_name> -r <report_name>`
 
 If you've got an authorisation token for the system (e.g. with many Kubernetes 1.5 or earlier installs) you can run with
 
-`kubeautoanalyzer.rb -s https://<API_SERVER_IP>:<API_SERVER_PORT> -t <TOKEN> -r <report_name>`
+`kubeautoanalyzer -s https://<API_SERVER_IP>:<API_SERVER_PORT> -t <TOKEN> -r <report_name>`
 
 
