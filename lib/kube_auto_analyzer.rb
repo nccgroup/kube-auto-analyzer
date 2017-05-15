@@ -1,7 +1,7 @@
 module KubeAutoAnalyzer
   attr_accessor :execute
-  #require "kube_auto_analyzer/version"
-  VERSION="0.0.1"
+  require "kube_auto_analyzer/version"
+  
 
   def self.execute(commmand_line_opts)
     @options = commmand_line_opts
