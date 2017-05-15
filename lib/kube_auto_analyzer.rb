@@ -1,37 +1,9 @@
-#!/usr/bin/env ruby
-  # == Synopsis  
-  # WARNING WARNING THIS IS NOT READY FOR USE.
-  #
-  # This script is designed to automate security analysis of a Kubernetes cluster based on the CIS Kubernetes Standard
-  # it makes use of kubeclient - https://github.com/abonas/kubeclient to access the API
-  # At the moment it works best for installations that run the API server in a pod as that makes it easy to query the command line options
-  #
-  # Best way to access it us use a kubeconfig file as this contains all the information needed.
-  # Options are also there for providing tokens to access, but they're a bit more awkward to use.
-  #
-  # == Author
-  # Author::  Rory McCune
-  # Released as open source by NCC Group Plc - http://www.nccgroup.com/
-  # License:: AGPL See LICENSE.md for more information
-  #
-  # == Options
-  #   -h, --help                                    Displays help message
-  #   -v, --version                                 Display the version, then exit
-  #   -c <file>, --config <file>                    Specify a kubeconfig file to use for connection to the API server
-  #   -r <file>, --report <file>                    Name of file for reporting
-  #   --reportDirectory <dir>                       Place the report in a different directory
-  #   -t <token>, --token <token>                   Specify an auth. token to use
-  #   -f <token_file>, --token_file <token_file>    Specify a file to read an authentication token from
-  #   -s, --server                                  The target server to connect to in the format https://server_ip:server_port. Not needed if a config file is used
-  #
-  # == Usage 
-  #
-  #   kubernetesanalyzer.rb -c <kubeconfigfile> -r <reportfile>
-  
-class KubernetesAnalyzer
-    VERSION = '0.0.1'
+module KubeAutoAnalyzer
+  attr_accessor :execute
+  #require "kube_auto_analyzer/version"
+  VERSION="0.0.1"
 
-  def initialize(commmand_line_opts)
+  def self.execute(commmand_line_opts)
     @options = commmand_line_opts
     require 'logger'
     begin
@@ -55,9 +27,11 @@ class KubernetesAnalyzer
     @report_file = File.new(@report_file_name + '.txt','w+')
     @html_report_file = File.new(@report_file_name + '.html','w+')
     @log.debug("New Report File created #{@report_file_name}")
+    run
   end
 
-  def run
+  def self.run
+    @log.debug("Entering the run method")
     @results = Hash.new
     #TODO: Expose this as an option rather than hard-code to off
     unless @options.config_file
@@ -104,8 +78,10 @@ class KubernetesAnalyzer
     end
   end
 
-  def test_api_server
+  def self.test_api_server
+    @log.debug("Entering the test API Server Method")
     target = @options.target_server
+    @log.debug("target is #{target}")
     @results[target]['api_server'] = Hash.new
     @results[target]['evidence'] = Hash.new
     pods = @client.get_pods
@@ -324,7 +300,7 @@ class KubernetesAnalyzer
     @results[target]['evidence']['API Server'] = api_server_command_line
   end
 
-  def test_scheduler
+  def self.test_scheduler
     target = @options.target_server
     @results[target]['scheduler'] = Hash.new
     pods = @client.get_pods
@@ -350,7 +326,7 @@ class KubernetesAnalyzer
     @results[target]['evidence']['Scheduler'] = scheduler_command_line
   end
 
-  def test_controller_manager
+  def self.test_controller_manager
     target = @options.target_server
     @results[target]['controller_manager'] = Hash.new
     pods = @client.get_pods
@@ -409,7 +385,7 @@ class KubernetesAnalyzer
 
   end
 
-  def test_etcd
+  def self.test_etcd
     target = @options.target_server
     @results[target]['etcd'] = Hash.new
     pods = @client.get_pods
@@ -471,7 +447,7 @@ class KubernetesAnalyzer
 
 
 
-  def report
+  def self.report
     @report_file.puts "Kubernetes Analyzer"
     @report_file.puts "===================\n\n"
     @report_file.puts "**Server Reviewed** : #{@options.target_server}"
@@ -510,17 +486,9 @@ class KubernetesAnalyzer
     @report_file.close
   end
 
-  def html_report
-    begin
-      require 'kramdown'
-    rescue LoadError
-      puts "HTML Report needs Kramdown"
-      puts "Try 'gem install kramdown'"
-      exit
-    end
+  def self.html_report
     base_report = File.open(@report_file_name + '.txt','r').read
     puts base_report.length.to_s
-    report = Kramdown::Document.new(base_report)
     @html_report_file << '
       <!DOCTYPE html>
       <head>
@@ -626,73 +594,4 @@ class KubernetesAnalyzer
     @html_report_file.puts '</body></html>'
   end
 
-end
-
-
-if __FILE__ == $0
-  require 'ostruct'
-  require 'optparse'
-  options = OpenStruct.new
-
-  options.report_directory = Dir.pwd
-  options.report_file = 'kube-parse-report'
-  options.target_server = 'http://127.0.0.1:8080'
-  options.html_report = false
-  options.token = ''
-  options.token_file = ''
-  options.config_file = false
-
-  opts = OptionParser.new do |opts|
-    opts.banner = "Kubernetes Auto Analyzer #{KubernetesAnalyzer::VERSION}"
-
-    opts.on("-s", "--server [SERVER]", "Target Server") do |serv|
-      options.target_server = serv
-    end
-
-    #TODO: Need options for different authentication mechanisms      
-    opts.on("-c", "--config [CONFIG]", "kubeconfig file to load") do |file|
-      options.config_file = file
-    end
-
-    opts.on("-t", "--token [TOKEN]", "Bearer Token to Use") do |token|
-      options.token = token
-    end
-
-    opts.on("-f", "--token_file [TOKENFILE]", "Token file to use (provide full path)") do |token_file|
-      options.token = token_file
-    end
-      
-    opts.on("-r", "--report [REPORT]", "Report name") do |rep|
-      options.report_file = rep + '_kube'
-    end
-
-    opts.on("--html_report", "Generate an HTML report as well as the txt one") do |html|
-      options.html_report = true
-    end
-
-    opts.on("--reportDirectory [REPORTDIRECTORY]", "Report Directory") do |rep|
-      options.report_directory = rep
-    end
-
-    opts.on("-h", "--help", "-?", "--?", "Get Help") do |help|
-      puts opts
-      exit
-    end
-      
-    opts.on("-v", "--version", "get Version") do |ver|
-      puts "Kubernetes Analyzer Version #{KubernetesAnalyzer::VERSION}"
-      exit
-    end
-  end
-
-  opts.parse!(ARGV)
-
-  unless (options.token.length > 1 || options.config_file || options.token_file.length > 1)
-    puts "No valid auth mechanism specified"
-    puts opts
-    exit
-  end
-
-  analysis = KubernetesAnalyzer.new(options)
-  analysis.run
 end

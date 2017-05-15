@@ -1,0 +1,67 @@
+#!/usr/bin/env ruby
+
+  require 'kube_auto_analyzer'
+  require 'ostruct'
+  require 'optparse'
+  options = OpenStruct.new
+
+  options.report_directory = Dir.pwd
+  options.report_file = 'kube-parse-report'
+  options.target_server = 'http://127.0.0.1:8080'
+  options.html_report = false
+  options.token = ''
+  options.token_file = ''
+  options.config_file = false
+
+  opts = OptionParser.new do |opts|
+    opts.banner = "Kubernetes Auto Analyzer #{KubeAutoAnalyzer::VERSION}"
+
+    opts.on("-s", "--server [SERVER]", "Target Server") do |serv|
+      options.target_server = serv
+    end
+
+    #TODO: Need options for different authentication mechanisms      
+    opts.on("-c", "--config [CONFIG]", "kubeconfig file to load") do |file|
+      options.config_file = file
+    end
+
+    opts.on("-t", "--token [TOKEN]", "Bearer Token to Use") do |token|
+      options.token = token
+    end
+
+    opts.on("-f", "--token_file [TOKENFILE]", "Token file to use (provide full path)") do |token_file|
+      options.token = token_file
+    end
+      
+    opts.on("-r", "--report [REPORT]", "Report name") do |rep|
+      options.report_file = rep + '_kube'
+    end
+
+    opts.on("--html_report", "Generate an HTML report as well as the txt one") do |html|
+      options.html_report = true
+    end
+
+    opts.on("--reportDirectory [REPORTDIRECTORY]", "Report Directory") do |rep|
+      options.report_directory = rep
+    end
+
+    opts.on("-h", "--help", "-?", "--?", "Get Help") do |help|
+      puts opts
+      exit
+    end
+      
+    opts.on("-v", "--version", "get Version") do |ver|
+      puts "Kubernetes Analyzer Version #{KubernetesAnalyzer::VERSION}"
+      exit
+    end
+  end
+
+  opts.parse!(ARGV)
+
+  unless (options.token.length > 1 || options.config_file || options.token_file.length > 1)
+    puts "No valid auth mechanism specified"
+    puts opts
+    exit
+  end
+
+KubeAutoAnalyzer.execute(options)
