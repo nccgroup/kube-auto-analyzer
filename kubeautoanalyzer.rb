@@ -115,6 +115,11 @@ class KubernetesAnalyzer
         @api_server = pod
       end
     end
+
+    unless @api_server
+      @results[target]['api_server']['API Server Pod Not Found'] = "Error"
+      return
+    end
     
     api_server_command_line = @api_server['spec']['containers'][0]['command']
 
@@ -330,6 +335,11 @@ class KubernetesAnalyzer
       end
     end
     
+    unless @scheduler
+      @results[target]['scheduler']['Scheduler Pod Not Found'] = "Error"
+      return
+    end
+
     scheduler_command_line = @scheduler['spec']['containers'][0]['command']
 
     unless scheduler_command_line.index{|line| line =~ /--profiling=false/}
@@ -347,11 +357,17 @@ class KubernetesAnalyzer
     pods.each do |pod| 
       #Ok this is a bit naive as a means of hitting the API server but hey it's a start
       if pod['metadata']['name'] =~ /kube-controller-manager/
-        @scheduler = pod
+        @controller_manager = pod
       end
     end
-    
-    controller_manager_command_line = @scheduler['spec']['containers'][0]['command']
+
+    unless @controller_manager
+      @results[target]['controller_manager']['Controller Manager Pod Not Found'] = "Error"
+      return
+    end    
+
+
+    controller_manager_command_line = @controller_manager['spec']['containers'][0]['command']
 
     unless controller_manager_command_line.index{|line| line =~ /--terminated-pod-gc-threshold/}
       @results[target]['controller_manager']['CIS 1.3.1 - Ensure that the --terminated-pod-gc-threshold argument is set as appropriate'] = "Fail"
@@ -404,6 +420,11 @@ class KubernetesAnalyzer
       end
     end
     
+    unless @etcd
+      @results[target]['etcd']['etcd Pod Not Found'] = "Error"
+      return
+    end
+
     etcd_command_line = @etcd['spec']['containers'][0]['command']
 
     unless (etcd_command_line.index{|line| line =~ /--cert-file/} && etcd_command_line.index{|line| line =~ /--key-file/})
