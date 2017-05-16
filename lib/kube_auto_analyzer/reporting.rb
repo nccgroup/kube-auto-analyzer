@@ -41,6 +41,8 @@ module KubeAutoAnalyzer
 
   def self.html_report
     base_report = File.open(@report_file_name + '.txt','r').read
+    logo_path = File.join(__dir__, "data-logo.b64")
+    logo = File.open(logo_path).read
     @log.debug("Starting HTML Report")
     @html_report_file << '
       <!DOCTYPE html>
@@ -59,6 +61,11 @@ module KubeAutoAnalyzer
           font-size: 48px;
           color: #C41230;
         }
+        .master-node {
+          background: #F5F5F5;
+          border: 1px solid black;
+          padding-left: 6px;
+        }
         #api-server-results {
           font-weight: italic;
           font-size: 36px;
@@ -71,6 +78,7 @@ module KubeAutoAnalyzer
         th {
          font: bold 11px;
          color: #C41230;
+         background: #999999;
          letter-spacing: 2px;
          text-transform: uppercase;
          text-align: left;
@@ -84,10 +92,13 @@ module KubeAutoAnalyzer
     </style>
   </head>
   <body>
-  <h1>Kubernetes Analyzer</h1>
+  
     '
+    @html_report_file.puts '<img width="100" height="100" align="right"' + " src=#{logo} />"
+    @html_report_file.puts "<h1>Kubernetes Auto Analyzer</h1>"
     @html_report_file.puts "<br><b>Server Reviewed : </b> #{@options.target_server}"
-    @html_report_file.puts "<br><br><h2>API Server Results</h2>"
+    @html_report_file.puts '<br><br><div class="master-node"><h2>Master Node Results</h2><br>'
+    @html_report_file.puts "<h2>API Server Results</h2>"
     @html_report_file.puts "<table><thead><tr><th>Check</th><th>result</th></tr></thead>"
     @results[@options.target_server]['api_server'].each do |test, result|      
       if result == "Fail"
@@ -142,6 +153,9 @@ module KubeAutoAnalyzer
     @results[@options.target_server]['evidence'].each do |area, output|
       @html_report_file.puts "<tr><td>#{area}</td><td>#{output}</td></tr>"
     end
+    #Close the master Node Div
+    @html_report_file.puts "</table></div>"
+    @html_report_file.puts '<br><br><div class="worker-node"><h2>Worker Node Results</h2><br>'
     @html_report_file.puts '</body></html>'
   end
 end
