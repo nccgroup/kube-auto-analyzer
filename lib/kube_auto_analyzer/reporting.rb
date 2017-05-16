@@ -45,51 +45,49 @@ module KubeAutoAnalyzer
     @html_report_file << '
       <!DOCTYPE html>
       <head>
-       <title> Kubernetes Analyzer Report</title>
+       <title> Kubernetes Auto Analyzer Report</title>
        <meta charset="utf-8"> 
        <style>
         body {
-          font: normal 14px auto "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
-          color: #4f6b72;
-          background: #E6EAE9;
+          font: normal 14px;
+          font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+          color: #C41230;
+          background: #FFFFFF;
         }
         #kubernetes-analyzer {
           font-weight: bold;
           font-size: 48px;
-          font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
-          color: #4f6b72;
+          color: #C41230;
         }
         #api-server-results {
           font-weight: italic;
           font-size: 36px;
-          font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
-          color: #4f6b72;
+          color: #C41230;
         }
-         th {
-         font: bold 11px "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
-         color: #4f6b72;
-         border-right: 1px solid #C1DAD7;
-         border-bottom: 1px solid #C1DAD7;
-         border-top: 1px solid #C1DAD7;
+        table, th, td {
+          border-collapse: collapse;
+          border: 1px solid black;
+        }
+        th {
+         font: bold 11px;
+         color: #C41230;
          letter-spacing: 2px;
          text-transform: uppercase;
          text-align: left;
          padding: 6px 6px 6px 12px;
-         }
-      td {
-        border-right: 1px solid #C1DAD7;
-        border-bottom: 1px solid #C1DAD7;
-        background: #fff;
+        }
+        td {
+        background: #FFFFFF;
         padding: 6px 6px 6px 12px;
-        color: #4f6b72;
-      }
+        color: #333333;
+        }
     </style>
   </head>
   <body>
   <h1>Kubernetes Analyzer</h1>
     '
-    @html_report_file.puts "<br><br><b>Server Reviewed : </b> #{@options.target_server}"
-    @html_report_file.puts "<br><br><h2>API Server Results</h2><br>"
+    @html_report_file.puts "<br><b>Server Reviewed : </b> #{@options.target_server}"
+    @html_report_file.puts "<br><br><h2>API Server Results</h2>"
     @html_report_file.puts "<table><thead><tr><th>Check</th><th>result</th></tr></thead>"
     @results[@options.target_server]['api_server'].each do |test, result|      
       if result == "Fail"
@@ -101,7 +99,7 @@ module KubeAutoAnalyzer
     end
     @html_report_file.puts "</table>"
     @html_report_file.puts "<br><br>"
-    @html_report_file.puts "<br><br><h2>Scheduler Results</h2><br>"
+    @html_report_file.puts "<br><br><h2>Scheduler Results</h2>"
     @html_report_file.puts "<table><thead><tr><th>Check</th><th>result</th></tr></thead>"
     @results[@options.target_server]['scheduler'].each do |test, result|      
       if result == "Fail"
@@ -114,7 +112,7 @@ module KubeAutoAnalyzer
     @html_report_file.puts "</table>"
 
     @html_report_file.puts "<br><br>"
-    @html_report_file.puts "<br><br><h2>Controller Manager Results</h2><br>"
+    @html_report_file.puts "<br><br><h2>Controller Manager Results</h2>"
     @html_report_file.puts "<table><thead><tr><th>Check</th><th>result</th></tr></thead>"
     @results[@options.target_server]['controller_manager'].each do |test, result|      
       if result == "Fail"
@@ -127,7 +125,7 @@ module KubeAutoAnalyzer
     @html_report_file.puts "</table>"
 
     @html_report_file.puts "<br><br>"
-    @html_report_file.puts "<br><br><h2>etcd Results</h2><br>"
+    @html_report_file.puts "<br><br><h2>etcd Results</h2>"
     @html_report_file.puts "<table><thead><tr><th>Check</th><th>result</th></tr></thead>"
     @results[@options.target_server]['etcd'].each do |test, result|      
       if result == "Fail"
@@ -139,7 +137,7 @@ module KubeAutoAnalyzer
     end
     @html_report_file.puts "</table>"
 
-    @html_report_file.puts "<br><br><h2>Evidence</h2><br><br>"
+    @html_report_file.puts "<br><br><h2>Evidence</h2><br>"
     @html_report_file.puts "<table><thead><tr><th>Area</th><th>Output</th></tr></thead>"
     @results[@options.target_server]['evidence'].each do |area, output|
       @html_report_file.puts "<tr><td>#{area}</td><td>#{output}</td></tr>"
