@@ -37,6 +37,7 @@ One of the challenges with scripting these checks is that there are many differe
 ## Tested With
 
  - Kubeadm 1.5,1.6 - Works ok  
+ - kube-aws - Works ok
 
 ## Usage
 
