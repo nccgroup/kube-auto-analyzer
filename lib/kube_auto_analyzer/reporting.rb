@@ -98,7 +98,7 @@ module KubeAutoAnalyzer
     @html_report_file.puts "<h1>Kubernetes Auto Analyzer</h1>"
     @html_report_file.puts "<br><b>Server Reviewed : </b> #{@options.target_server}"
     @html_report_file.puts '<br><br><div class="master-node"><h2>Master Node Results</h2><br>'
-    @html_report_file.puts "<h2>API Server Results</h2>"
+    @html_report_file.puts "<h2>API Server</h2>"
     @html_report_file.puts "<table><thead><tr><th>Check</th><th>result</th></tr></thead>"
     @results[@options.target_server]['api_server'].each do |test, result|      
       if result == "Fail"
@@ -110,7 +110,7 @@ module KubeAutoAnalyzer
     end
     @html_report_file.puts "</table>"
     @html_report_file.puts "<br><br>"
-    @html_report_file.puts "<br><br><h2>Scheduler Results</h2>"
+    @html_report_file.puts "<br><br><h2>Scheduler</h2>"
     @html_report_file.puts "<table><thead><tr><th>Check</th><th>result</th></tr></thead>"
     @results[@options.target_server]['scheduler'].each do |test, result|      
       if result == "Fail"
@@ -123,7 +123,7 @@ module KubeAutoAnalyzer
     @html_report_file.puts "</table>"
 
     @html_report_file.puts "<br><br>"
-    @html_report_file.puts "<br><br><h2>Controller Manager Results</h2>"
+    @html_report_file.puts "<br><br><h2>Controller Manager</h2>"
     @html_report_file.puts "<table><thead><tr><th>Check</th><th>result</th></tr></thead>"
     @results[@options.target_server]['controller_manager'].each do |test, result|      
       if result == "Fail"
@@ -136,7 +136,7 @@ module KubeAutoAnalyzer
     @html_report_file.puts "</table>"
 
     @html_report_file.puts "<br><br>"
-    @html_report_file.puts "<br><br><h2>etcd Results</h2>"
+    @html_report_file.puts "<br><br><h2>etcd</h2>"
     @html_report_file.puts "<table><thead><tr><th>Check</th><th>result</th></tr></thead>"
     @results[@options.target_server]['etcd'].each do |test, result|      
       if result == "Fail"
