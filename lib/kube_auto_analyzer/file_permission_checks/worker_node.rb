@@ -20,6 +20,7 @@ module KubeAutoAnalyzer
     end
     results = @client.get_pod_log("kube-auto-analyzer-file-check","default")
     puts results
+    @client.delete_pod("kube-auto-analyzer-file-check","default")
   end
 
 end
