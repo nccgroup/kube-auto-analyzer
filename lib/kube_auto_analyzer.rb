@@ -46,7 +46,12 @@ module KubeAutoAnalyzer
       @results[@options.target_server] = Hash.new
       @client = Kubeclient::Client.new @options.target_server, 'v1', auth_options: auth_options, ssl_options: ssl_options
     else
-      config = Kubeclient::Config.read(@options.config_file)
+      begin
+        config = Kubeclient::Config.read(@options.config_file)
+      rescue Errno::ENOENT
+        puts "Config File could not be read, check the path?"
+        exit
+      end
       @client = Kubeclient::Client.new(
         config.context.api_endpoint,
         config.context.api_version,
