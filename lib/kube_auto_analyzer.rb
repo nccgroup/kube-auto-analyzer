@@ -3,6 +3,7 @@ module KubeAutoAnalyzer
   require "kube_auto_analyzer/version"
   require "kube_auto_analyzer/api_checks/master_node"
   require "kube_auto_analyzer/reporting"
+  require "kube_auto_analyzer/file_permission_checks/worker_node"
   
 
   def self.execute(commmand_line_opts)
@@ -77,5 +78,8 @@ module KubeAutoAnalyzer
     test_etcd
     report
     html_report
+    if @options.worker_file_checks
+      check_worker_etc
+    end
   end
 end
