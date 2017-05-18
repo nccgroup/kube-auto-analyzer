@@ -24,9 +24,9 @@ module KubeAutoAnalyzer
       pod.spec.restartPolicy = "Never"
       pod.spec.containers = {}
       pod.spec.containers = [{name: "kubeautoanalyzerfiletest", image: "raesene/kube-auto-analyzer-agent:latest"}]
-      pod.spec.volumes = [{name: 'etck8s', hostPath: {path: '/etc/kubernetes'}}]
-      pod.spec.containers[0].volumeMounts = [{mountPath: '/hostetck8s', name: 'etck8s'}]
-      pod.spec.containers[0].args = ["/hostetck8s"]
+      pod.spec.volumes = [{name: 'etck8s', hostPath: {path: '/etc'}}]
+      pod.spec.containers[0].volumeMounts = [{mountPath: '/etc', name: 'etck8s'}]
+      pod.spec.containers[0].args = ["/etc/kubernetes"]
       pod.spec.nodeselector = {}
       pod.spec.nodeselector['kubernetes.io/hostname'] = node_hostname
       @client.create_pod(pod)
@@ -36,10 +36,10 @@ module KubeAutoAnalyzer
         retry
       end
       files = JSON.parse(@client.get_pod_log(container_name,"default"))
-      files.each do |file|
+      #files.each do |file|
         #Need to replace the mounted path with the real host path
-        file[0].sub! "/hostetck8s", "/etc/kubernetes"
-      end
+      #  file[0].sub! "/hostetck8s", "/etc/kubernetes"
+      #end
       @results[target]['worker_files'][node_hostname] = files
       @client.delete_pod(container_name,"default")
 
