@@ -76,10 +76,10 @@ module KubeAutoAnalyzer
     test_scheduler
     test_controller_manager
     test_etcd
-    report
-    html_report
     if @options.worker_file_checks
       check_worker_etc
     end
+    report
+    html_report
   end
 end

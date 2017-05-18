@@ -27,6 +27,16 @@ module KubeAutoAnalyzer
       @report_file.puts '* ' + test + ' - **' + result + '**'
     end
 
+    @report_file.puts "\n\nWorker Nodes File Permissions"
+    @report_file.puts "----------------------\n\n"
+    @log.debug("Class is #{@results[@options.target_server]['worker_files'].class}")
+    @results[@options.target_server]['worker_files'].each do |node, results|
+      @report_file.puts "\n\n#{node}\n"
+      results.each do |file|
+        @report_file.puts file.join(', ')
+      end
+    end
+
     @report_file.puts "\n\nEvidence"
     @report_file.puts "---------------\n\n"
     @report_file.puts '    ' + @results[@options.target_server]['evidence']['API Server'].to_s
@@ -61,7 +71,7 @@ module KubeAutoAnalyzer
           font-size: 48px;
           color: #C41230;
         }
-        .master-node {
+        .master-node, .worker-node {
           background: #F5F5F5;
           border: 1px solid black;
           padding-left: 6px;
@@ -155,7 +165,18 @@ module KubeAutoAnalyzer
     end
     #Close the master Node Div
     @html_report_file.puts "</table></div>"
-    @html_report_file.puts '<br><br><div class="worker-node"><h2>Worker Node Results</h2><br>'
+    @html_report_file.puts '<br><br><div class="worker-node"><h2>Worker Node Results</h2>'
+    @html_report_file.puts '<br><h3>File Permissions</h3>'
+    @results[@options.target_server]['worker_files'].each do |node, results|
+      @html_report_file.puts "<br><b>#{node}</b><br>"
+      @html_report_file.puts "<table><thead><tr><th>file</th><th>user</th><th>group</th><th>permissions</th></thead>"
+      results.each do |file|
+        @html_report_file.puts "<tr><td>#{file[0]}</td><td>#{file[1]}</td><td>#{file[2]}</td><td>#{file[3]}</td></tr>"
+      end
+      @html_report_file.puts "</table>"
+    end
+    #Close the Worker Node Div
+    @html_report_file.puts '</div>'
     @html_report_file.puts '</body></html>'
   end
 end
