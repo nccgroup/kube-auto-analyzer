@@ -7,6 +7,7 @@ module KubeAutoAnalyzer
     @results[target]['worker_files'] = Hash.new
 
     #Run on any nodes that aren't NoSchedule
+    #Doesn't necessarily mean worker nodes, but a reasonable facsimile for now.
     nodes = Array.new
     @client.get_nodes.each do |node|
       unless node.spec.taints.to_s =~ /NoSchedule/
