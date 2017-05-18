@@ -34,12 +34,8 @@
       options.token = token_file
     end
       
-    opts.on("-r", "--report [REPORT]", "Report name") do |rep|
+    opts.on("-r", "--report [REPORT]", "Report Base name") do |rep|
       options.report_file = rep + '_kube'
-    end
-
-    opts.on("--html_report", "Generate an HTML report as well as the txt one") do |html|
-      options.html_report = true
     end
 
     opts.on("--reportDirectory [REPORTDIRECTORY]", "Report Directory") do |rep|
