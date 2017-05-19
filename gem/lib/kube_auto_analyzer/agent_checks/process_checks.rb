@@ -25,8 +25,7 @@ module KubeAutoAnalyzer
       pod.spec.containers = {}
       pod.spec.containers = [{name: "kaakubelettest", image: "raesene/kaa-agent:latest"}]
       pod.spec.containers[0].args = ["/process-checker.rb"]
-      pod.spec.containers[0].securityContext = {}
-      pod.spec.containers[0].securityContext.hostPID = true
+      pod.spec.hostPID = true
       pod.spec.nodeselector = {}
       pod.spec.nodeselector['kubernetes.io/hostname'] = node_hostname
       @client.create_pod(pod)
@@ -36,6 +35,7 @@ module KubeAutoAnalyzer
         retry
       end
       processes = JSON.parse(@client.get_pod_log(container_name,"default"))
+      puts processes
       processes.each do |proc|
         if proc =~ /kubelet/
           kubelet_proc = proc
@@ -43,7 +43,7 @@ module KubeAutoAnalyzer
       end
 
       #Checks
-      puts kubelet_proc
+      #puts kubelet_proc
 
       #@results[target]['kubelet_checks'][node_hostname] = files
       @client.delete_pod(container_name,"default")

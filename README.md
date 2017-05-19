@@ -6,13 +6,15 @@ It's currently under heavy development so use at your own risk :)
 
 ## Approach
 
-There's two parts currently implemented by this tool, both wrapped in a ruby gem.  The first element takes the approach of extracting the command lines used to start the relevant containers (e.g. API Server, Scheduler etc) and check them against the relevant sections of the standard.  This is possible via the API server as the spec. of each container contains the command line executed.  At the moment Kubernetes doesn't have any form of API to query it's launch parameters, so this seems like the best approach.
+There's two parts currently implemented by this tool, both wrapped in a ruby gem.  The first element takes the approach of extracting the command lines used to start the relevant containers (e.g. API Server, Scheduler etc) from the API and check them against the relevant sections of the standard.  This is possible via the API server as the spec. of each container contains the command line executed.  At the moment Kubernetes doesn't have any form of API to query it's launch parameters, so this seems like the best approach.
 
 This approach has some limitations but has the advantage of working from anywhere that has access to the API server (so doesn't need deployment on the actual nodes themselves).
 
-In addition to that we've got an agent based approach for checks on the worker nodes (starting with file permissions checks).  The agent can get deployed via the Kubernetes API and then complete it's checks and place the results in the pod log which can then be read in by the script and parsed.  This is a bit on the hacky side but avoids the necessity for any form of network communications from the agent to the running script, which could well be complex.
+In addition to that we've got an agent based approach for checks on the nodes (starting with file permissions checks).  The agent can get deployed via the Kubernetes API and then complete it's checks and place the results in the pod log which can then be read in by the script and parsed.  This is a bit on the hacky side but avoids the necessity for any form of network communications from the agent to the running script, which could well be complex.
 
 A challenge of this approach is that we can't easily deploy to master nodes if they have NoSchedule set, so unfortunately can't use this approach for things like the Kubeadm masters.
+
+We've started implementing checks on the kubelet processes using this approach, however a bug in 1.6.0-1.6.2 means that hostPID isn't working for those versions, so unless you have 1.6.3 this bit won't do much for now.
 
 One of the challenges with scripting these checks is that there are many different Kubernetes distributions, and each one does things differently, so implementing a generic script that covers them all would be tricky.  We're working off kubeadm as a base, but ideally we'll get it working with as many distributions as possible.
 
@@ -29,7 +31,7 @@ One of the challenges with scripting these checks is that there are many differe
 
 ### Worker Node Security Configuration
 
- - Section 2.1 - API Config - TBC
+ - Section 2.1 - API Config - in progress using the KAA agent.
  - Section 2.2 - Configuration Files - Basic coverage implemented.  At the moment we're providing information about file permissions back to the report as there's a lot of variety of locations and file names, it doesn't make a lot of sense to try and actually checking them to provide a pass/fail.
 
 ### Federated Deployments
@@ -42,6 +44,7 @@ One of the challenges with scripting these checks is that there are many differe
 
  - Kubeadm 1.5,1.6 - Works ok  
  - kube-aws - Works ok
+ - kismatic - Works ok
 
 ## Usage
 
