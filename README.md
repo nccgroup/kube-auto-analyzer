@@ -67,3 +67,10 @@ If you've got an authorisation token for the system (e.g. with many Kubernetes 1
 `kubeautoanalyzer -s https://<API_SERVER_IP>:<API_SERVER_PORT> -t <TOKEN> -r <report_name>`
 
 
+## TODO
+
+ - Add a gate to the process checks to avoid 1.6.0-1.6.2 (there's a bug with hostPID which stops it working)
+ - Complete kubelet check reporting for the text report
+ - Add check for service account tokens being cluster admin
+ - Add check for kubelet API being available unauthenticated (can we just do that from the command line switches..)
+ - Add check on authorization modes explicitly
