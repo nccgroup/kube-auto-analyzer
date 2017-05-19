@@ -167,8 +167,35 @@ module KubeAutoAnalyzer
     #Close the master Node Div
     @html_report_file.puts "</table></div>"
     @html_report_file.puts '<br><br><div class="worker-node"><h2>Worker Node Results</h2>'
+    if @options.agent_process_checks
+      @results[@options.target_server]['kubelet_checks'].each do |node, results|
+        @html_report_file.puts "<br><b>#{node} Kubelet Checks</b>"
+        @html_report_file.puts "<table><thead><tr><th>Check</th><th>result</th></tr></thead>"
+        results.each do |test, result|
+          if result == "Fail"
+            result = '<span style="color:red;">Fail</span>'
+          elsif result == "Pass"
+            result = '<span style="color:green;">Pass</span>'
+          end
+          @html_report_file.puts "<tr><td>#{test}</td><td>#{result}</td></tr>"
+        end
+        @html_report_file.puts "</table>"
+      end
+
+      @html_report_file.puts "<br><br><h2>Evidence</h2><br>"
+      @html_report_file.puts "<table><thead><tr><th>Host</th><th>Area</th><th>Output</th></tr></thead>"
+      @results[@options.target_server]['node_evidence'].each do |node, evidence|
+        evidence.each do |area, data|
+          @html_report_file.puts "<tr><td>#{node}</td><td>#{area}</td><td>#{data}</td></tr>"   
+        end
+      end
+      @html_report_file.puts "</table>"
+
+    end
+    #Close the Worker Node Div
+    @html_report_file.puts '</div>'
     if @options.agent_file_checks
-      @html_report_file.puts '<br><h3>File Permissions</h3>'
+      @html_report_file.puts '<br><h2>File Permissions</h2>'
       @results[@options.target_server]['worker_files'].each do |node, results|
         @html_report_file.puts "<br><b>#{node}</b><br>"
         @html_report_file.puts "<table><thead><tr><th>file</th><th>user</th><th>group</th><th>permissions</th></thead>"
@@ -178,8 +205,7 @@ module KubeAutoAnalyzer
         @html_report_file.puts "</table>"
       end
     end
-    #Close the Worker Node Div
-    @html_report_file.puts '</div>'
+
     @html_report_file.puts '</body></html>'
   end
 end
