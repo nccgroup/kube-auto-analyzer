@@ -17,9 +17,9 @@ require 'json'
       @results << [f, user, group, permissions]
       #puts "#{permissions}\t#{user}\t#{group}\t#{f}\n"
       rescue Errno::ENOENT
-        puts "didn't find " + f
+        #puts "didn't find " + f
       rescue ArgumentError
-        puts "something went wrong with " + f
+        #puts "something went wrong with " + f
     end 
   end
 end

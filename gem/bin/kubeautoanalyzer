@@ -12,7 +12,8 @@
   options.token = ''
   options.token_file = ''
   options.config_file = false
-  options.worker_file_checks = false
+  options.agent_file_checks = false
+  options.agent_process_checks = false
 
   opts = OptionParser.new do |opts|
     opts.banner = "Kubernetes Auto Analyzer #{KubeAutoAnalyzer::VERSION}"
@@ -43,7 +44,11 @@
     end
 
     opts.on("--fileChecks","Carry out File permission Checks (expermimental)") do |fc|
-      options.worker_file_checks = true
+      options.agent_file_checks = true
+    end
+
+    opts.on("--processChecks","Carry out agent based process Checks (expermimental)") do |fc|
+      options.agent_process_checks = true
     end
 
     opts.on("-h", "--help", "-?", "--?", "Get Help") do |help|

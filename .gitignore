@@ -1,4 +1,4 @@
-*gem
+*.gem
 test1*
 admin.conf
 kube-analyzer-log.txt

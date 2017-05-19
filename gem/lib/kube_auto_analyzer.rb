@@ -3,7 +3,8 @@ module KubeAutoAnalyzer
   require "kube_auto_analyzer/version"
   require "kube_auto_analyzer/api_checks/master_node"
   require "kube_auto_analyzer/reporting"
-  require "kube_auto_analyzer/file_permission_checks/worker_node"
+  require "kube_auto_analyzer/agent_checks/file_checks"
+  require "kube_auto_analyzer/agent_checks/process_checks"
   
 
   def self.execute(commmand_line_opts)
@@ -76,9 +77,13 @@ module KubeAutoAnalyzer
     test_scheduler
     test_controller_manager
     test_etcd
-    if @options.worker_file_checks
-      check_worker_etc
+    if @options.agent_file_checks
+      check_files
     end
+    if @options.agent_process_checks
+      check_kubelet_process
+    end
+
     report
     html_report
   end
