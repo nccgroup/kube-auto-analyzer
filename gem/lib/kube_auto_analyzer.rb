@@ -89,4 +89,6 @@ module KubeAutoAnalyzer
     report
     html_report
   end
+
+
 end

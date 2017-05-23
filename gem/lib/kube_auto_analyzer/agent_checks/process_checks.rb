@@ -37,6 +37,14 @@ module KubeAutoAnalyzer
           retry
         end
         processes = JSON.parse(@client.get_pod_log(container_name,"default"))
+        #If we didn't get more than one process, we're probably not reading the host ones
+        #So either it's a bug or we don't have rights
+        if processes.length < 2
+          @log.debug("Process Check failed didn't get the node process list")
+          @results[target]['kubelet_checks'][node_hostname]['Kubelet Not Found'] = "Error - couldn't see host process list"
+          @client.delete_pod(container_name,"default")
+          return
+        end
         #puts processes
         kubelet_proc = ''
         processes.each do |proc|

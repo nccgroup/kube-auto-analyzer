@@ -68,3 +68,4 @@ If you've got an authorisation token for the system (e.g. with many Kubernetes 1
  - Add check for service account tokens being cluster admin
  - Add check for kubelet API being available unauthenticated (can we just do that from the command line switches..)
  - Add check on authorization modes explicitly
+ - Add a JSON reporting option for inclusion in automated processes.
