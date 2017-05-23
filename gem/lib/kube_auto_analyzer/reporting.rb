@@ -166,8 +166,8 @@ module KubeAutoAnalyzer
     end
     #Close the master Node Div
     @html_report_file.puts "</table></div>"
-    @html_report_file.puts '<br><br><div class="worker-node"><h2>Worker Node Results</h2>'
     if @options.agent_process_checks
+      @html_report_file.puts '<br><br><div class="worker-node"><h2>Worker Node Results</h2>'
       @results[@options.target_server]['kubelet_checks'].each do |node, results|
         @html_report_file.puts "<br><b>#{node} Kubelet Checks</b>"
         @html_report_file.puts "<table><thead><tr><th>Check</th><th>result</th></tr></thead>"
