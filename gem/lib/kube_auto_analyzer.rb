@@ -70,7 +70,9 @@ module KubeAutoAnalyzer
     begin
       @client.get_pods.to_s
     rescue
-      puts "whoops that didn't go well"
+      puts "Check of API connection failed."
+      puts "try using kubectl with the same connection details"
+      puts "to see what's going wrong."
       exit
     end
     test_api_server
