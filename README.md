@@ -10,7 +10,7 @@ There's two parts currently implemented by this tool, both wrapped in a ruby gem
 
 This approach has some limitations but has the advantage of working from anywhere that has access to the API server (so doesn't need deployment on the actual nodes themselves).
 
-In addition to that we've got an agent based approach for checks on the nodes (starting with file permissions checks).  The agent can get deployed via the Kubernetes API and then complete it's checks and place the results in the pod log which can then be read in by the script and parsed.  This is a bit on the hacky side but avoids the necessity for any form of network communications from the agent to the running script, which could well be complex.
+In addition to that we've got an agent based approach for checks on the nodes (starting with file permissions checks and process checks on kubelets).  The agent can get deployed via the Kubernetes API and then complete it's checks and place the results in the pod log which can then be read in by the script and parsed.  This is a bit on the hacky side but avoids the necessity for any form of network communications from the agent to the running script, which could well be complex.
 
 A challenge of this approach is that we can't easily deploy to master nodes if they have NoSchedule set, so unfortunately can't use this approach for things like the Kubeadm masters.
 
@@ -31,8 +31,8 @@ One of the challenges with scripting these checks is that there are many differe
 
 ### Worker Node Security Configuration
 
- - Section 2.1 - API Config - in progress using the KAA agent.
- - Section 2.2 - Configuration Files - Basic coverage implemented.  At the moment we're providing information about file permissions back to the report as there's a lot of variety of locations and file names, it doesn't make a lot of sense to try and actually checking them to provide a pass/fail.
+ - Section 2.1 - API Config - kubelet checks in place via kaa-agent
+ - Section 2.2 - Configuration Files - Basic coverage implemented via kaa-agent.  At the moment we're providing information about file permissions back to the report as there's a lot of variety of locations and file names, it doesn't make a lot of sense to try and actually checking them to provide a pass/fail.
 
 ### Federated Deployments
 
@@ -48,13 +48,7 @@ One of the challenges with scripting these checks is that there are many differe
 
 ## Usage
 
-First up you'll need to install the gem.  Until it's in rubygems use
-
-`gem build kube_auto_analyzer.gemspec`
-
-then
-
-`gem install kube_auto_analyzer-0.0.1.gem`
+First up you'll need to install the gem. `gem install kube_auto_analyzer` should do the job and add the dependencies.
 
 and that should put the kubeautoanalyzer command onto your path (assuming you have a sane ruby setup!)
 
