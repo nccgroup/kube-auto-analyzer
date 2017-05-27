@@ -45,6 +45,7 @@ One of the challenges with scripting these checks is that there are many differe
  - Kubeadm 1.5,1.6 - Works ok  
  - kube-aws - Works ok
  - kismatic - Works ok
+ - GCE - Doesn't really work at all.  GCE doesn't run the control plane components as pods, so we can't use this approach.
 
 ## Usage
 

@@ -64,6 +64,7 @@ module KubeAutoAnalyzer
       )
       #We didn't specify the target on the command line so lets get it from the config file
       @options.target_server = config.context.api_endpoint
+      @log.debug("target is " + @options.target_server)
       @results[config.context.api_endpoint] = Hash.new
     end
     #Test response
