@@ -206,6 +206,28 @@ module KubeAutoAnalyzer
       end
     end
 
+    @html_report_file.puts '<br><h2>Vulnerability Checks</h2>'
+    @html_report_file.puts '<br><h3>Unauthenticated Access to the Kubelet</h3>'
+    @html_report_file.puts "<table><thead><tr><th>Node IP Address</th><th>Result</th></thead>"
+    @results[@options.target_server]['vulns']['unauth_kubelet'].each do |node, result|
+      unless (result =~ /Forbidden/ || result =~ /Unavailable/)
+        output = "Vulnerable"
+      else
+        output = result
+      end
+      @html_report_file.puts "<tr><td>#{node}</td><td>#{output}</td></tr>"
+    end
+    @html_report_file.puts "</table>"
+
+    @html_report_file.puts "<br><br><h2>Vulnerability Evidence</h2><br>"
+    @html_report_file.puts "<table><thead><tr><th>Vulnerability</th><th>Host</th><th>Output</th></tr></thead>"
+    @results[@options.target_server]['vulns']['unauth_kubelet'].each do |node, result|
+      @html_report_file.puts "<tr><td>Unauthenticated Kubelet Access</td><td>#{node}</td><td>#{result}</td></tr>"   
+    end
+    @html_report_file.puts "</table>"
+
+
+    #Closing the report off
     @html_report_file.puts '</body></html>'
   end
 end

@@ -6,6 +6,7 @@ module KubeAutoAnalyzer
   require "kube_auto_analyzer/agent_checks/file_checks"
   require "kube_auto_analyzer/agent_checks/process_checks"
   require "kube_auto_analyzer/vuln_checks/kubelet"
+  require "kube_auto_analyzer/utility/network"
   
 
   def self.execute(commmand_line_opts)
