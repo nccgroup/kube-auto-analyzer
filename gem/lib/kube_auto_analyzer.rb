@@ -5,6 +5,7 @@ module KubeAutoAnalyzer
   require "kube_auto_analyzer/reporting"
   require "kube_auto_analyzer/agent_checks/file_checks"
   require "kube_auto_analyzer/agent_checks/process_checks"
+  require "kube_auto_analyzer/vuln_checks/kubelet"
   
 
   def self.execute(commmand_line_opts)
@@ -80,6 +81,7 @@ module KubeAutoAnalyzer
     test_scheduler
     test_controller_manager
     test_etcd
+    test_unauth_kubelet_external
     if @options.agent_file_checks
       check_files
     end
