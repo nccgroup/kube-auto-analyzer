@@ -12,19 +12,21 @@
   options.token = ''
   options.token_file = ''
   options.config_file = false
-  options.agent_file_checks = false
-  options.agent_process_checks = false
+  options.agent_checks = false
+  
 
   opts = OptionParser.new do |opts|
     opts.banner = "Kubernetes Auto Analyzer #{KubeAutoAnalyzer::VERSION}"
 
-    opts.on("-s", "--server [SERVER]", "Target Server") do |serv|
-      options.target_server = serv
-    end
+
 
     #TODO: Need options for different authentication mechanisms      
     opts.on("-c", "--config [CONFIG]", "kubeconfig file to load") do |file|
       options.config_file = file
+    end
+
+    opts.on("-s", "--server [SERVER]", "Target Server") do |serv|
+      options.target_server = serv
     end
 
     opts.on("-t", "--token [TOKEN]", "Bearer Token to Use") do |token|
@@ -43,12 +45,8 @@
       options.report_directory = rep
     end
 
-    opts.on("--fileChecks","Carry out File permission Checks (expermimental)") do |fc|
-      options.agent_file_checks = true
-    end
-
-    opts.on("--processChecks","Carry out agent based process Checks (expermimental)") do |fc|
-      options.agent_process_checks = true
+    opts.on("--agentChecks","Carry out Agent Based Checks ") do |fc|
+      options.agent_checks = true
     end
 
     opts.on("-h", "--help", "-?", "--?", "Get Help") do |help|

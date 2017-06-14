@@ -83,15 +83,11 @@ module KubeAutoAnalyzer
     test_controller_manager
     test_etcd
     test_unauth_kubelet_external
-    test_unauth_kubelet_internal
-    if @options.agent_file_checks
+    if @options.agent_checks
+      test_unauth_kubelet_internal
       check_files
-    end
-    if @options.agent_process_checks
       check_kubelet_process
     end
-
-    report
     html_report
   end
 
