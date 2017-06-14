@@ -51,7 +51,6 @@ module KubeAutoAnalyzer
   end
 
   def self.html_report
-    base_report = File.open(@report_file_name + '.txt','r').read
     logo_path = File.join(__dir__, "data-logo.b64")
     logo = File.open(logo_path).read
     @log.debug("Starting HTML Report")

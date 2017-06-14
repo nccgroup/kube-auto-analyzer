@@ -77,8 +77,6 @@ Unsurprisingly there's an image on Docker hub.  To run you'll need to put the co
 
 ## TODO
 
- - Add check for service account tokens being cluster admin
- - Add check on the insecure port being available internally or externally.
  - Add check on authorization modes explicitly
  - Getting to the point where it would be worth some re-factoring to reduce duplication.  specifically abstract common routines like container creation, consistency in variable useetc.
  - Re-implement text reporting.  We have the HTML report for humans, so realistically it might be better to do the other report as something like JSON, which could be used elsewhere.

@@ -19,20 +19,25 @@ end
 target_url = ARGV[0]
 results = Hash.new
 port = URI.parse(target_url).port
-token = File.open('/var/run/secrets/kubernetes.io/serviceaccount/token','r').read
-if is_port_open?(nod, port)
+begin
+  token = File.open('/var/run/secrets/kubernetes.io/serviceaccount/token','r').read
+rescue Errno::ENOENT
+  token = "Invalid token"
+end
+host = URI.parse(target_url).host
+if is_port_open?(host, port)
     
   response = HTTParty.get(target_url, :verify => false, headers: {"Authorization" => "Bearer #{token}"})
   #Using this as an analog for whether we're cluster admin or not, bit naive
   #We don't use this as the main check as we don't want to return secrets in the evidence
   secrets_check = HTTParty.get(target_url + '/v1/secrets/', :verify => false, headers: {"Authorization" => "Bearer #{token}"})
   if response.forbidden? || secrets_check.forbidden?
-    results[nod] = "Not Vulnerable - Request Forbidden"
+    results[target_url] = "Not Vulnerable - Request Forbidden"
   else
-    results[nod] = response.body
+    results[target_url] = response.body
   end
 else
-  results[nod] = "Not Vulnerable - Port Not Open"
+  results[target_url] = "Not Vulnerable - Port Not Open"
 end
 puts JSON.generate(results)
 
