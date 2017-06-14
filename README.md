@@ -68,11 +68,13 @@ If you've got an authorisation token for the system (e.g. with many Kubernetes 1
 
 `kubeautoanalyzer -s https://<API_SERVER_IP>:<API_SERVER_PORT> -t <TOKEN> -r <report_name>`
 
+The switch for adding agent based checking is `--agentChecks` .  If you run using this it will take quite a lot longer to complete, as it pulls/runs the container some times.
+
 ## Usage with Docker
 
 Unsurprisingly there's an image on Docker hub.  To run you'll need to put the config file (if you're using one) in a directory that can be accessed by the docker container and then mount it as a volume to /data in the container e.g.
 
-`docker run -v /data:/data raesene/kube_auto_analyzer -c /data/admin.conf -r testdock --processChecks --fileChecks`
+`docker run -v /data:/data raesene/kube_auto_analyzer -c /data/admin.conf -r testdock --agentChecks`
 
 
 ## TODO
