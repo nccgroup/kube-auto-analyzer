@@ -6,6 +6,8 @@ module KubeAutoAnalyzer
   require "kube_auto_analyzer/agent_checks/file_checks"
   require "kube_auto_analyzer/agent_checks/process_checks"
   require "kube_auto_analyzer/vuln_checks/kubelet"
+  require "kube_auto_analyzer/vuln_checks/api_server"
+  require "kube_auto_analyzer/vuln_checks/service_token"
   require "kube_auto_analyzer/utility/network"
   
 
@@ -30,7 +32,8 @@ module KubeAutoAnalyzer
     @log.debug("Target API Server is " + @options.target_server)
 
     @report_file_name = @base_dir + '/' + @options.report_file
-    @report_file = File.new(@report_file_name + '.txt','w+')
+    #Remove the Text report for now as we're not using this option
+    #@report_file = File.new(@report_file_name + '.txt','w+')
     @html_report_file = File.new(@report_file_name + '.html','w+')
     @log.debug("New Report File created #{@report_file_name}")
         
@@ -83,8 +86,11 @@ module KubeAutoAnalyzer
     test_controller_manager
     test_etcd
     test_unauth_kubelet_external
+    test_insecure_api_external
     if @options.agent_checks
       test_unauth_kubelet_internal
+      test_insecure_api_internal
+      test_service_token_internal
       check_files
       check_kubelet_process
     end
