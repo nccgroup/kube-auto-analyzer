@@ -29,20 +29,20 @@ module KubeAutoAnalyzer
       pod.spec.containers[0].volumeMounts = [{mountPath: '/etc', name: 'etck8s'}]
       pod.spec.containers[0].args = ["/file-checker.rb","/etc/kubernetes"]
       pod.spec.nodeselector = {}
-      pod.spec.nodeselector['kubernetes.io/hostname'] = node_hostname
-      @client.create_pod(pod)
       begin
-        sleep(5) until @client.get_pod(container_name,"default")['status']['containerStatuses'][0]['state']['terminated']['reason'] == "Completed"
-      rescue
-        retry
+        pod.spec.nodeselector['kubernetes.io/hostname'] = node_hostname
+        @client.create_pod(pod)
+        begin
+          sleep(5) until @client.get_pod(container_name,"default")['status']['containerStatuses'][0]['state']['terminated']['reason'] == "Completed"
+        rescue
+          retry
+        end
+        files = JSON.parse(@client.get_pod_log(container_name,"default"))
+      
+        @results[target]['worker_files'][node_hostname] = files
+      ensure
+        @client.delete_pod(container_name,"default")
       end
-      files = JSON.parse(@client.get_pod_log(container_name,"default"))
-      #files.each do |file|
-        #Need to replace the mounted path with the real host path
-      #  file[0].sub! "/hostetck8s", "/etc/kubernetes"
-      #end
-      @results[target]['worker_files'][node_hostname] = files
-      @client.delete_pod(container_name,"default")
 
     end
     @log.debug("Finished Worker File Check")

@@ -75,3 +75,4 @@ Unsurprisingly there's an image on Docker hub.  To run you'll need to put the co
  - Add check for kubelet API being available unauthenticated (can we just do that from the command line switches..)
  - Add check on authorization modes explicitly
  - Add a JSON reporting option for inclusion in automated processes.
+ - Getting to the point where it would be worth some re-factoring to reduce duplication.  specifically abstract common routines like container creation, consistency in variable useetc.

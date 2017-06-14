@@ -1,4 +1,5 @@
 *.gem
 test1*
 admin.conf
+15admin.conf
 kube-analyzer-log.txt
