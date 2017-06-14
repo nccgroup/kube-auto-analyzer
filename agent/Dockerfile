@@ -8,3 +8,4 @@ RUN gem install --no-document sys-proctable httparty
 ADD file-checker.rb /
 ADD process-checker.rb /
 ADD kubelet-checker.rb /
+ADD api-server-checker.rb /

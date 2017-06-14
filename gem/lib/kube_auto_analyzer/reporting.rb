@@ -232,14 +232,49 @@ module KubeAutoAnalyzer
       @html_report_file.puts "</table>"
     end
 
+    @html_report_file.puts '<br><h3>External Insecure API Port Exposed</h3>'
+    @html_report_file.puts "<table><thead><tr><th>Node IP Address</th><th>Result</th></thead>"
+    @results[@options.target_server]['vulns']['insecure_api_external'].each do |node, result|
+      unless (result =~ /Forbidden/ || result =~ /Not Open/)
+        output = "Vulnerable"
+      else
+        output = result
+      end
+      @html_report_file.puts "<tr><td>#{node}</td><td>#{output}</td></tr>"
+    end
+    @html_report_file.puts "</table>"
+    if @options.agent_checks
+      @html_report_file.puts '<br><h3>Internal Insecure API Port Exposed</h3>'
+      @html_report_file.puts "<table><thead><tr><th>Node IP Address</th><th>Result</th></thead>"
+      @results[@options.target_server]['vulns']['insecure_api_internal'].each do |node, result|
+        unless (result =~ /Forbidden/ || result =~ /Not Open/)
+          output = "Vulnerable"
+        else
+          output = result
+        end
+        @html_report_file.puts "<tr><td>#{node}</td><td>#{output}</td></tr>"
+      end
+      @html_report_file.puts "</table>"
+    end
+
+
+
     @html_report_file.puts "<br><br><h2>Vulnerability Evidence</h2><br>"
     @html_report_file.puts "<table><thead><tr><th>Vulnerability</th><th>Host</th><th>Output</th></tr></thead>"
-    @results[@options.target_server]['vulns']['unauth_kubelet'].each do |node, result|
-      @html_report_file.puts "<tr><td>External Unauthenticated Kubelet Access</td><td>#{node}</td><td>#{result}</td></tr>"   
+    @results[@options.target_server]['vulns']['insecure_api_external'].each do |node, result|
+      @html_report_file.puts "<tr><td>External Insecure API Server Access</td><td>#{node}</td><td>#{result}</td></tr>"   
     end
     if @options.agent_checks
-      @results[@options.target_server]['vulns']['internal_kubelet'].each do |node, result|
-        @html_report_file.puts "<tr><td>Internal Unauthenticated Kubelet Access</td><td>#{node}</td><td>#{result}</td></tr>"   
+      @results[@options.target_server]['vulns']['insecure_api_internal'].each do |node, result|
+        @html_report_file.puts "<tr><td>Internal Insecure API Server Access</td><td>#{node}</td><td>#{result}</td></tr>"   
+      end
+    end
+    @results[@options.target_server]['vulns']['insecure_api_external'].each do |node, result|
+      @html_report_file.puts "<tr><td>External Insecure API Server Access</td><td>#{node}</td><td>#{result}</td></tr>"   
+    end
+    if @options.agent_checks
+      @results[@options.target_server]['vulns']['insecure_api_internal'].each do |node, result|
+        @html_report_file.puts "<tr><td>Internal Insecure API Server Access</td><td>#{node}</td><td>#{result}</td></tr>"   
       end
     end
     @html_report_file.puts "</table>"

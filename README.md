@@ -10,7 +10,7 @@ There's two parts currently implemented by this tool, both wrapped in a ruby gem
 
 This approach has some limitations but has the advantage of working from anywhere that has access to the API server (so doesn't need deployment on the actual nodes themselves).
 
-In addition to that we've got an agent based approach for checks on the nodes (starting with file permissions checks and process checks on kubelets).  The agent can get deployed via the Kubernetes API and then complete it's checks and place the results in the pod log which can then be read in by the script and parsed.  This is a bit on the hacky side but avoids the necessity for any form of network communications from the agent to the running script, which could well be complex.
+In addition to that we've got an agent based approach for checks on the nodes, like file permission and kubelet checks.  The agent can get deployed via the Kubernetes API and then complete it's checks and place the results in the pod log which can then be read in by the script and parsed.  This is a bit on the hacky side but avoids the necessity for any form of network communications from the agent to the running script, which could well be complex.
 
 A challenge of this approach is that we can't easily deploy to master nodes if they have NoSchedule set, so unfortunately can't use this approach for things like the Kubeadm masters.
 
@@ -39,6 +39,13 @@ One of the challenges with scripting these checks is that there are many differe
  - Section 3.1 - Federation API Server - TBC
  - Section 3.2 - Federation Controller Manager - TBC
 
+### Additional Vulnerability Checks
+
+We're starting to implement checks for common Kubernetes vulnerabilities.  Some of these can be derived from the CIS compliance checks, but in order to get more of a change of picking them up, we're implementing direct checks as well.
+
+ - Unauthenticated Kubelet check.  Test in place for external access and internal access (via kaa-agent)
+ - Unauthenticated API access Check. TBD
+ - cluster-admin service token.  TBD
 
 ## Tested With
 
@@ -70,9 +77,8 @@ Unsurprisingly there's an image on Docker hub.  To run you'll need to put the co
 
 ## TODO
 
- - Complete kubelet check reporting for the text report
  - Add check for service account tokens being cluster admin
- - Add check for kubelet API being available unauthenticated (can we just do that from the command line switches..)
+ - Add check on the insecure port being available internally or externally.
  - Add check on authorization modes explicitly
- - Add a JSON reporting option for inclusion in automated processes.
  - Getting to the point where it would be worth some re-factoring to reduce duplication.  specifically abstract common routines like container creation, consistency in variable useetc.
+ - Re-implement text reporting.  We have the HTML report for humans, so realistically it might be better to do the other report as something like JSON, which could be used elsewhere.
