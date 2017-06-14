@@ -41,7 +41,7 @@ One of the challenges with scripting these checks is that there are many differe
 
 ### Additional Vulnerability Checks
 
-We're starting to implement checks for common Kubernetes vulnerabilities.  Some of these can be derived from the CIS compliance checks, but in order to get more of a change of picking them up, we're implementing direct checks as well.
+We're starting to implement checks for common Kubernetes vulnerabilities.  Some of these can be derived from the CIS compliance checks, but in order to get more of a chance of picking them up, we're implementing direct checks as well.
 
  - Unauthenticated Kubelet check.  Test in place for external access and internal access (via kaa-agent)
  - Unauthenticated API access Check. TBD
