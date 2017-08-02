@@ -8,6 +8,8 @@ def self.is_port_open?(ip, port)
     return false
   rescue Errno::ETIMEDOUT
     return false
+  rescue Errno::ENETUNREACH
+    return false
   end
   true
 end

@@ -219,6 +219,24 @@ module KubeAutoAnalyzer
       @results[target]['api_server']['CIS 1.1.31 - Ensure that the --etcd-cafile argument is set as appropriate'] = "Pass"
     end
 
+    unless api_server_command_line.index{|line| line =~ /--authorization-mode\S*Node/}
+      @results[target]['api_server']['CIS 1.1.32 - Ensure that the --authorization-mode argument is set to Node'] = "Fail"
+    else
+      @results[target]['api_server']['CIS 1.1.32 - Ensure that the --authorization-mode argument is set to Node'] = "Pass"
+    end
+
+    unless api_server_command_line.index{|line| line =~ /--admission-control\S*NodeRestriction/}
+      @results[target]['api_server']['CIS 1.1.33 - Ensure that the admission control policy is set to NodeRestriction'] = "Fail"
+    else
+      @results[target]['api_server']['CIS 1.1.33 - Ensure that the admission control policy is set to NodeRestriction'] = "Pass"
+    end
+
+    unless api_server_command_line.index{|line| line =~ /--experimental-encryption-provider-config/}
+      @results[target]['api_server']['CIS 1.1.34 - Ensure that the --experimental-encryption-provider-config argument is set as appropriate'] = "Fail"
+    else
+      @results[target]['api_server']['CIS 1.1.34 - Ensure that the --experimental-encryption-provider-config argument is set as appropriate'] = "Pass"
+    end
+
     @results[target]['evidence']['API Server'] = api_server_command_line
   end
 
