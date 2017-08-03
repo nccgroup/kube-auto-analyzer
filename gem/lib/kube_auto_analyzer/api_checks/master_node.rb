@@ -304,21 +304,27 @@ module KubeAutoAnalyzer
     end  
 
     unless controller_manager_command_line.index{|line| line =~ /--use-service-account-credentials=true/}
-      @results[target]['controller_manager']['CIS 1.3.4 - Ensure that the --use-service-account-credentials argument is set to true'] = "Fail"
+      @results[target]['controller_manager']['CIS 1.3.3 - Ensure that the --use-service-account-credentials argument is set to true'] = "Fail"
     else
-      @results[target]['controller_manager']['CIS 1.3.4 - Ensure that the --use-service-account-credentials argument is set to true'] = "Pass"
+      @results[target]['controller_manager']['CIS 1.3.3 - Ensure that the --use-service-account-credentials argument is set to true'] = "Pass"
     end 
 
     unless controller_manager_command_line.index{|line| line =~ /--service-account-private-key-file/}
-      @results[target]['controller_manager']['CIS 1.3.5 - Ensure that the --service-account-private-key-file argument is set as appropriate'] = "Fail"
+      @results[target]['controller_manager']['CIS 1.3.4 - Ensure that the --service-account-private-key-file argument is set as appropriate'] = "Fail"
     else
-      @results[target]['controller_manager']['CIS 1.3.5 - Ensure that the --service-account-private-key-file argument is set as appropriate'] = "Pass"
+      @results[target]['controller_manager']['CIS 1.3.4 - Ensure that the --service-account-private-key-file argument is set as appropriate'] = "Pass"
     end 
 
     unless controller_manager_command_line.index{|line| line =~ /--root-ca-file/}
-      @results[target]['controller_manager']['CIS 1.3.6 - Ensure that the --root-ca-file argument is set as appropriate'] = "Fail"
+      @results[target]['controller_manager']['CIS 1.3.5 - Ensure that the --root-ca-file argument is set as appropriate'] = "Fail"
     else
-      @results[target]['controller_manager']['CIS 1.3.6 - Ensure that the --root-ca-file argument is set as appropriate'] = "Pass"
+      @results[target]['controller_manager']['CIS 1.3.5 - Ensure that the --root-ca-file argument is set as appropriate'] = "Pass"
+    end 
+
+    unless controller_manager_command_line.index{|line| line =~ /RotateKubeletServerCertificate=true/}
+      @results[target]['controller_manager']['CIS 1.3.7 - Ensure that the RotateKubeletServerCertificate argument is set to true'] = "Fail"
+    else
+      @results[target]['controller_manager']['CIS 1.3.7 - Ensure that the RotateKubeletServerCertificate argument is set to true'] = "Pass"
     end 
 
     @results[target]['evidence']['Controller Manager'] = controller_manager_command_line
