@@ -8,6 +8,7 @@ module KubeAutoAnalyzer
   require "kube_auto_analyzer/vuln_checks/kubelet"
   require "kube_auto_analyzer/vuln_checks/api_server"
   require "kube_auto_analyzer/vuln_checks/service_token"
+  require "kube_auto_analyzer/vuln_checks/amicontained"
   require "kube_auto_analyzer/utility/network"
   
 
@@ -93,6 +94,7 @@ module KubeAutoAnalyzer
       test_service_token_internal
       check_files
       check_kubelet_process
+      check_amicontained
     end
     html_report
   end

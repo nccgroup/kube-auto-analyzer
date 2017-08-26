@@ -1,0 +1,219 @@
+
+      <!DOCTYPE html>
+      <head>
+       <title> Kubernetes Auto Analyzer Report</title>
+       <meta charset="utf-8"> 
+       <style>
+        body {
+          font: normal 14px;
+          font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+          color: #C41230;
+          background: #FFFFFF;
+        }
+        #kubernetes-analyzer {
+          font-weight: bold;
+          font-size: 48px;
+          color: #C41230;
+        }
+        .master-node, .worker-node {
+          background: #F5F5F5;
+          border: 1px solid black;
+          padding-left: 6px;
+        }
+        #api-server-results {
+          font-weight: italic;
+          font-size: 36px;
+          color: #C41230;
+        }
+        table, th, td {
+          border-collapse: collapse;
+          border: 1px solid black;
+        }
+        th {
+         font: bold 11px;
+         color: #C41230;
+         background: #999999;
+         letter-spacing: 2px;
+         text-transform: uppercase;
+         text-align: left;
+         padding: 6px 6px 6px 12px;
+        }
+        td {
+        background: #FFFFFF;
+        padding: 6px 6px 6px 12px;
+        color: #333333;
+        }
+    </style>
+  </head>
+  <body>
+  
+    <img width="100" height="100" align="right" src=data:image/png;base64,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 />
+<h1>Kubernetes Auto Analyzer</h1>
+<br><b>Server Reviewed : </b> https://192.168.41.80:6443
+<br><br><div class="master-node"><h2>Master Node Results</h2><br>
+<h2>API Server</h2>
+<table><thead><tr><th>Check</th><th>result</th></tr></thead>
+<tr><td>CIS 1.1.1 - Ensure that the --allow-privileged argument is set to false</td><td><span style="color:red;">Fail</span></td></tr>
+<tr><td>CIS 1.1.2 - Ensure that the --anonymous-auth argument is set to false</td><td><span style="color:red;">Fail</span></td></tr>
+<tr><td>CIS 1.1.3 - Ensure that the --basic-auth-file argument is not set</td><td><span style="color:green;">Pass</span></td></tr>
+<tr><td>CIS 1.1.4 - Ensure that the --insecure-allow-any-token argument is not set</td><td><span style="color:green;">Pass</span></td></tr>
+<tr><td>CIS 1.1.5 - Ensure that the --kubelet-https argument is set to true</td><td><span style="color:green;">Pass</span></td></tr>
+<tr><td>CIS 1.1.6 - Ensure that the --insecure-bind-address argument is not set</td><td><span style="color:green;">Pass</span></td></tr>
+<tr><td>CIS 1.1.7 - Ensure that the --insecure-port argument is set to 0</td><td><span style="color:green;">Pass</span></td></tr>
+<tr><td>CIS 1.1.8 - Ensure that the --secure-port argument is not set to 0</td><td><span style="color:green;">Pass</span></td></tr>
+<tr><td>CIS 1.1.9 - Ensure that the --profiling argument is set to false</td><td><span style="color:red;">Fail</span></td></tr>
+<tr><td>CIS 1.1.10 - Ensure that the --repair-malformed-updates argument is set to false</td><td><span style="color:red;">Fail</span></td></tr>
+<tr><td>CIS 1.1.11 - Ensure that the admission control policy is not set to AlwaysAdmit</td><td><span style="color:green;">Pass</span></td></tr>
+<tr><td>CIS 1.1.12 - Ensure that the admission control policy is set to AlwaysPullImages</td><td><span style="color:red;">Fail</span></td></tr>
+<tr><td>CIS 1.1.13 - Ensure that the admission control policy is set to DenyEscalatingExec</td><td><span style="color:red;">Fail</span></td></tr>
+<tr><td>CIS 1.1.14 - Ensure that the admission control policy is set to SecurityContextDeny</td><td><span style="color:red;">Fail</span></td></tr>
+<tr><td>CIS 1.1.15 - Ensure that the admission control policy is set to NamespaceLifecycle</td><td><span style="color:green;">Pass</span></td></tr>
+<tr><td>CIS 1.1.16 - Ensure that the --audit-log-path argument is set as appropriate</td><td><span style="color:red;">Fail</span></td></tr>
+<tr><td>CIS 1.1.17 - Ensure that the --audit-log-maxage argument is set to 30 or as appropriate</td><td><span style="color:red;">Fail</span></td></tr>
+<tr><td>CIS 1.1.18 - Ensure that the --audit-log-maxbackup argument is set to 10 or as appropriate</td><td><span style="color:red;">Fail</span></td></tr>
+<tr><td>CIS 1.1.19 - Ensure that the --audit-log-maxsize argument is set to 100 or as appropriate</td><td><span style="color:red;">Fail</span></td></tr>
+<tr><td>CIS 1.1.20 - Ensure that the --authorization-mode argument is not set to AlwaysAllow</td><td><span style="color:green;">Pass</span></td></tr>
+<tr><td>CIS 1.1.21 - Ensure that the --token-auth-file argument is not set</td><td><span style="color:green;">Pass</span></td></tr>
+<tr><td>CIS 1.1.22 - Ensure that the --kubelet-certificate-authority argument is set as appropriate</td><td><span style="color:red;">Fail</span></td></tr>
+<tr><td>CIS 1.1.23 - Ensure that the --kubelet-client-certificate and --kubelet-client-key arguments are set as appropriate</td><td><span style="color:green;">Pass</span></td></tr>
+<tr><td>CIS 1.1.24 - Ensure that the --service-account-lookup argument is set to true</td><td><span style="color:red;">Fail</span></td></tr>
+<tr><td>CIS 1.1.25 - Ensure that the admission control policy is set to PodSecurityPolicy</td><td><span style="color:red;">Fail</span></td></tr>
+<tr><td>CIS 1.1.26 - Ensure that the --service-account-key-file argument is set as appropriate</td><td><span style="color:green;">Pass</span></td></tr>
+<tr><td>CIS 1.1.27 - Ensure that the --etcd-certfile and --etcd-keyfile arguments are set as appropriate</td><td><span style="color:red;">Fail</span></td></tr>
+<tr><td>CIS 1.1.28 - Ensure that the admission control policy is set to ServiceAccount</td><td><span style="color:green;">Pass</span></td></tr>
+<tr><td>CIS 1.1.29 - Ensure that the --tls-cert-file and --tls-private-key-file arguments are set as appropriate</td><td><span style="color:green;">Pass</span></td></tr>
+<tr><td>CIS 1.1.30 - Ensure that the --client-ca-file argument is set as appropriate</td><td><span style="color:green;">Pass</span></td></tr>
+<tr><td>CIS 1.1.31 - Ensure that the --etcd-cafile argument is set as appropriate</td><td><span style="color:red;">Fail</span></td></tr>
+</table>
+<br><br>
+<br><br><h2>Scheduler</h2>
+<table><thead><tr><th>Check</th><th>result</th></tr></thead>
+<tr><td>CIS 1.2.1 - Ensure that the --profiling argument is set to false</td><td><span style="color:red;">Fail</span></td></tr>
+</table>
+<br><br>
+<br><br><h2>Controller Manager</h2>
+<table><thead><tr><th>Check</th><th>result</th></tr></thead>
+<tr><td>CIS 1.3.1 - Ensure that the --terminated-pod-gc-threshold argument is set as appropriate</td><td><span style="color:red;">Fail</span></td></tr>
+<tr><td>CIS 1.3.2 - Ensure that the --profiling argument is set to false</td><td><span style="color:red;">Fail</span></td></tr>
+<tr><td>CIS 1.3.3 - Ensure that the --insecure-experimental-approve-all-kubelet-csrs-for-group argument is not set</td><td><span style="color:red;">Fail</span></td></tr>
+<tr><td>CIS 1.3.4 - Ensure that the --use-service-account-credentials argument is set to true</td><td><span style="color:green;">Pass</span></td></tr>
+<tr><td>CIS 1.3.5 - Ensure that the --service-account-private-key-file argument is set as appropriate</td><td><span style="color:green;">Pass</span></td></tr>
+<tr><td>CIS 1.3.6 - Ensure that the --root-ca-file argument is set as appropriate</td><td><span style="color:green;">Pass</span></td></tr>
+</table>
+<br><br>
+<br><br><h2>etcd</h2>
+<table><thead><tr><th>Check</th><th>result</th></tr></thead>
+<tr><td>CIS 1.5.1 - Ensure that the --cert-file and --key-file arguments are set as appropriate</td><td><span style="color:red;">Fail</span></td></tr>
+<tr><td>CIS 1.5.2 - Ensure that the --client-cert-auth argument is set to true</td><td><span style="color:red;">Fail</span></td></tr>
+<tr><td>CIS 1.5.3 - Ensure that the --auto-tls argument is not set to true</td><td><span style="color:green;">Pass</span></td></tr>
+<tr><td>CIS 1.5.4 - Ensure that the --peer-cert-file and --peer-key-file arguments are set as appropriate</td><td><span style="color:red;">Fail</span></td></tr>
+<tr><td>CIS 1.5.5 - Ensure that the --peer-client-cert-auth argument is set to true</td><td><span style="color:red;">Fail</span></td></tr>
+<tr><td>CIS 1.5.6 - Ensure that the --peer-auto-tls argument is not set to true</td><td><span style="color:green;">Pass</span></td></tr>
+</table>
+<br><br><h2>Evidence</h2><br>
+<table><thead><tr><th>Area</th><th>Output</th></tr></thead>
+<tr><td>API Server</td><td>["kube-apiserver", "--kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname", "--requestheader-group-headers=X-Remote-Group", "--tls-private-key-file=/etc/kubernetes/pki/apiserver.key", "--secure-port=6443", "--insecure-port=0", "--admission-control=NamespaceLifecycle,LimitRanger,ServiceAccount,PersistentVolumeLabel,DefaultStorageClass,ResourceQuota,DefaultTolerationSeconds", "--storage-backend=etcd3", "--requestheader-allowed-names=front-proxy-client", "--kubelet-client-key=/etc/kubernetes/pki/apiserver-kubelet-client.key", "--requestheader-username-headers=X-Remote-User", "--service-cluster-ip-range=10.96.0.0/12", "--service-account-key-file=/etc/kubernetes/pki/sa.pub", "--client-ca-file=/etc/kubernetes/pki/ca.crt", "--tls-cert-file=/etc/kubernetes/pki/apiserver.crt", "--kubelet-client-certificate=/etc/kubernetes/pki/apiserver-kubelet-client.crt", "--allow-privileged=true", "--experimental-bootstrap-token-auth=true", "--requestheader-extra-headers-prefix=X-Remote-Extra-", "--requestheader-client-ca-file=/etc/kubernetes/pki/front-proxy-ca.crt", "--authorization-mode=RBAC", "--advertise-address=192.168.41.80", "--etcd-servers=http://127.0.0.1:2379"]</td></tr>
+<tr><td>Scheduler</td><td>["kube-scheduler", "--address=127.0.0.1", "--leader-elect=true", "--kubeconfig=/etc/kubernetes/scheduler.conf"]</td></tr>
+<tr><td>Controller Manager</td><td>["kube-controller-manager", "--cluster-signing-cert-file=/etc/kubernetes/pki/ca.crt", "--cluster-signing-key-file=/etc/kubernetes/pki/ca.key", "--leader-elect=true", "--service-account-private-key-file=/etc/kubernetes/pki/sa.key", "--use-service-account-credentials=true", "--controllers=*,bootstrapsigner,tokencleaner", "--kubeconfig=/etc/kubernetes/controller-manager.conf", "--root-ca-file=/etc/kubernetes/pki/ca.crt", "--address=127.0.0.1", "--insecure-experimental-approve-all-kubelet-csrs-for-group=system:bootstrappers"]</td></tr>
+<tr><td>etcd</td><td>["etcd", "--listen-client-urls=http://127.0.0.1:2379", "--advertise-client-urls=http://127.0.0.1:2379", "--data-dir=/var/lib/etcd"]</td></tr>
+</table></div>
+<br><br><div class="worker-node"><h2>Worker Node Results</h2>
+<br><b>16betanode2 Kubelet Checks</b>
+<table><thead><tr><th>Check</th><th>result</th></tr></thead>
+<tr><td>CIS 2.1.1 - Ensure that the --allow-privileged argument is set to false</td><td><span style="color:red;">Fail</span></td></tr>
+<tr><td>CIS 2.1.2 - Ensure that the --anonymous-auth argument is set to false</td><td><span style="color:red;">Fail</span></td></tr>
+<tr><td>CIS 2.1.3 - Ensure that the --authorization-mode argument is not set to AlwaysAllow</td><td><span style="color:green;">Pass</span></td></tr>
+<tr><td>CIS 2.1.4 - Ensure that the --client-ca-file argument is set as appropriate</td><td><span style="color:green;">Pass</span></td></tr>
+<tr><td>CIS 2.1.5 - Ensure that the --read-only-port argument is set to 0</td><td><span style="color:red;">Fail</span></td></tr>
+<tr><td>CIS 2.1.6 - Ensure that the --streaming-connection-idle-timeout argument is not set to 0</td><td><span style="color:green;">Pass</span></td></tr>
+<tr><td>CIS 2.1.7 - Ensure that the --protect-kernel-defaults argument is set to true</td><td><span style="color:red;">Fail</span></td></tr>
+<tr><td>CIS 2.1.8 - Ensure that the --make-iptables-util-chains argument is set to true</td><td><span style="color:green;">Pass</span></td></tr>
+<tr><td>CIS 2.1.9 - that the --keep-terminated-pod-volumes argument is set to false</td><td><span style="color:red;">Fail</span></td></tr>
+<tr><td>CIS 2.1.10 - Ensure that the --hostname-override argument is not set</td><td><span style="color:green;">Pass</span></td></tr>
+<tr><td>CIS 2.1.11 - Ensure that the --event-qps argument is set to 0</td><td><span style="color:red;">Fail</span></td></tr>
+<tr><td>CIS 2.1.12 - Ensure that the --tls-cert-file and --tls-private-key-file arguments are set as appropriate</td><td><span style="color:red;">Fail</span></td></tr>
+<tr><td>CIS 2.1.13 - Ensure that the --cadvisor-port argument is set to 0</td><td><span style="color:red;">Fail</span></td></tr>
+</table>
+<br><b>16betanode3 Kubelet Checks</b>
+<table><thead><tr><th>Check</th><th>result</th></tr></thead>
+<tr><td>CIS 2.1.1 - Ensure that the --allow-privileged argument is set to false</td><td><span style="color:red;">Fail</span></td></tr>
+<tr><td>CIS 2.1.2 - Ensure that the --anonymous-auth argument is set to false</td><td><span style="color:red;">Fail</span></td></tr>
+<tr><td>CIS 2.1.3 - Ensure that the --authorization-mode argument is not set to AlwaysAllow</td><td><span style="color:green;">Pass</span></td></tr>
+<tr><td>CIS 2.1.4 - Ensure that the --client-ca-file argument is set as appropriate</td><td><span style="color:green;">Pass</span></td></tr>
+<tr><td>CIS 2.1.5 - Ensure that the --read-only-port argument is set to 0</td><td><span style="color:red;">Fail</span></td></tr>
+<tr><td>CIS 2.1.6 - Ensure that the --streaming-connection-idle-timeout argument is not set to 0</td><td><span style="color:green;">Pass</span></td></tr>
+<tr><td>CIS 2.1.7 - Ensure that the --protect-kernel-defaults argument is set to true</td><td><span style="color:red;">Fail</span></td></tr>
+<tr><td>CIS 2.1.8 - Ensure that the --make-iptables-util-chains argument is set to true</td><td><span style="color:green;">Pass</span></td></tr>
+<tr><td>CIS 2.1.9 - that the --keep-terminated-pod-volumes argument is set to false</td><td><span style="color:red;">Fail</span></td></tr>
+<tr><td>CIS 2.1.10 - Ensure that the --hostname-override argument is not set</td><td><span style="color:green;">Pass</span></td></tr>
+<tr><td>CIS 2.1.11 - Ensure that the --event-qps argument is set to 0</td><td><span style="color:red;">Fail</span></td></tr>
+<tr><td>CIS 2.1.12 - Ensure that the --tls-cert-file and --tls-private-key-file arguments are set as appropriate</td><td><span style="color:red;">Fail</span></td></tr>
+<tr><td>CIS 2.1.13 - Ensure that the --cadvisor-port argument is set to 0</td><td><span style="color:red;">Fail</span></td></tr>
+</table>
+<br><br><h2>Evidence</h2><br>
+<table><thead><tr><th>Host</th><th>Area</th><th>Output</th></tr></thead>
+<tr><td>16betanode2</td><td>kubelet</td><td>/usr/bin/kubelet --kubeconfig=/etc/kubernetes/kubelet.conf --require-kubeconfig=true --pod-manifest-path=/etc/kubernetes/manifests --allow-privileged=true --network-plugin=cni --cni-conf-dir=/etc/cni/net.d --cni-bin-dir=/opt/cni/bin --cluster-dns=10.96.0.10 --cluster-domain=cluster.local --authorization-mode=Webhook --client-ca-file=/etc/kubernetes/pki/ca.crt</td></tr>
+<tr><td>16betanode3</td><td>kubelet</td><td>/usr/bin/kubelet --kubeconfig=/etc/kubernetes/kubelet.conf --require-kubeconfig=true --pod-manifest-path=/etc/kubernetes/manifests --allow-privileged=true --network-plugin=cni --cni-conf-dir=/etc/cni/net.d --cni-bin-dir=/opt/cni/bin --cluster-dns=10.96.0.10 --cluster-domain=cluster.local --authorization-mode=Webhook --client-ca-file=/etc/kubernetes/pki/ca.crt</td></tr>
+</table>
+</div>
+<br><h2>File Permissions</h2>
+<br><b>16betanode2</b><br>
+<table><thead><tr><th>file</th><th>user</th><th>group</th><th>permissions</th></thead>
+<tr><td>/etc/kubernetes/kubelet.conf</td><td>root</td><td>root</td><td>600</td></tr>
+<tr><td>/etc/kubernetes/manifests</td><td>root</td><td>root</td><td>755</td></tr>
+<tr><td>/etc/kubernetes/pki</td><td>root</td><td>root</td><td>755</td></tr>
+<tr><td>/etc/kubernetes/pki/ca.crt</td><td>root</td><td>root</td><td>644</td></tr>
+</table>
+<br><b>16betanode3</b><br>
+<table><thead><tr><th>file</th><th>user</th><th>group</th><th>permissions</th></thead>
+<tr><td>/etc/kubernetes/kubelet.conf</td><td>root</td><td>root</td><td>600</td></tr>
+<tr><td>/etc/kubernetes/manifests</td><td>root</td><td>root</td><td>755</td></tr>
+<tr><td>/etc/kubernetes/pki</td><td>root</td><td>root</td><td>755</td></tr>
+<tr><td>/etc/kubernetes/pki/ca.crt</td><td>root</td><td>root</td><td>644</td></tr>
+</table>
+<br><h2>Vulnerability Checks</h2>
+<br><h3>External Unauthenticated Access to the Kubelet</h3>
+<table><thead><tr><th>Node IP Address</th><th>Result</th></thead>
+<tr><td>192.168.41.80</td><td>Not Vulnerable - Request Forbidden</td></tr>
+<tr><td>192.168.41.81</td><td>Not Vulnerable - Request Forbidden</td></tr>
+<tr><td>192.168.41.82</td><td>Not Vulnerable - Request Forbidden</td></tr>
+</table>
+<br><h3>Internal Unauthenticated Access to the Kubelet</h3>
+<table><thead><tr><th>Node IP Address</th><th>Result</th></thead>
+<tr><td>192.168.41.80</td><td>Not Vulnerable - Request Forbidden</td></tr>
+<tr><td>192.168.41.81</td><td>Not Vulnerable - Request Forbidden</td></tr>
+<tr><td>192.168.41.82</td><td>Not Vulnerable - Request Forbidden</td></tr>
+</table>
+<br><h3>External Insecure API Port Exposed</h3>
+<table><thead><tr><th>Node IP Address</th><th>Result</th></thead>
+<tr><td>192.168.41.80</td><td>Not Vulnerable - Port Not Open</td></tr>
+<tr><td>192.168.41.81</td><td>Not Vulnerable - Port Not Open</td></tr>
+<tr><td>192.168.41.82</td><td>Not Vulnerable - Port Not Open</td></tr>
+</table>
+<br><h3>Internal Insecure API Port Exposed</h3>
+<table><thead><tr><th>Node IP Address</th><th>Result</th></thead>
+<tr><td>192.168.41.80</td><td>Not Vulnerable - Port Not Open</td></tr>
+<tr><td>192.168.41.81</td><td>Not Vulnerable - Port Not Open</td></tr>
+<tr><td>192.168.41.82</td><td>Not Vulnerable - Port Not Open</td></tr>
+</table>
+<br><h3>Default Service Token In Use</h3>
+<table><thead><tr><th>API endpoint</th><th>Result</th></thead>
+<tr><td>https://192.168.41.80:6443/api</td><td>Not Vulnerable - Request Forbidden</td></tr>
+</table>
+<br><br><h2>Vulnerability Evidence</h2><br>
+<table><thead><tr><th>Vulnerability</th><th>Host</th><th>Output</th></tr></thead>
+<tr><td>External Unauthenticated Kubelet Access</td><td>192.168.41.80</td><td>Not Vulnerable - Request Forbidden</td></tr>
+<tr><td>External Unauthenticated Kubelet Access</td><td>192.168.41.81</td><td>Not Vulnerable - Request Forbidden</td></tr>
+<tr><td>External Unauthenticated Kubelet Access</td><td>192.168.41.82</td><td>Not Vulnerable - Request Forbidden</td></tr>
+<tr><td>Internal Unauthenticated Kubelet Access</td><td>192.168.41.80</td><td>Not Vulnerable - Request Forbidden</td></tr>
+<tr><td>Internal Unauthenticated Kubelet Access</td><td>192.168.41.81</td><td>Not Vulnerable - Request Forbidden</td></tr>
+<tr><td>Internal Unauthenticated Kubelet Access</td><td>192.168.41.82</td><td>Not Vulnerable - Request Forbidden</td></tr>
+<tr><td>External Insecure API Server Access</td><td>192.168.41.80</td><td>Not Vulnerable - Port Not Open</td></tr>
+<tr><td>External Insecure API Server Access</td><td>192.168.41.81</td><td>Not Vulnerable - Port Not Open</td></tr>
+<tr><td>External Insecure API Server Access</td><td>192.168.41.82</td><td>Not Vulnerable - Port Not Open</td></tr>
+<tr><td>Internal Insecure API Server Access</td><td>192.168.41.80</td><td>Not Vulnerable - Port Not Open</td></tr>
+<tr><td>Internal Insecure API Server Access</td><td>192.168.41.81</td><td>Not Vulnerable - Port Not Open</td></tr>
+<tr><td>Internal Insecure API Server Access</td><td>192.168.41.82</td><td>Not Vulnerable - Port Not Open</td></tr>
+<tr><td>Default Service Token In Use</td><td>https://192.168.41.80:6443/api</td><td>Not Vulnerable - Request Forbidden</td></tr>
+</table>
+</body></html>

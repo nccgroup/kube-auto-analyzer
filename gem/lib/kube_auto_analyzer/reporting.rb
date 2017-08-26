@@ -272,6 +272,8 @@ module KubeAutoAnalyzer
 
 
 
+
+
     @html_report_file.puts "<br><br><h2>Vulnerability Evidence</h2><br>"
     @html_report_file.puts "<table><thead><tr><th>Vulnerability</th><th>Host</th><th>Output</th></tr></thead>"
     @results[@options.target_server]['vulns']['unauth_kubelet'].each do |node, result|
@@ -295,6 +297,12 @@ module KubeAutoAnalyzer
         @html_report_file.puts "<tr><td>Default Service Token In Use</td><td>#{node}</td><td>#{result}</td></tr>"   
       end
     end
+    if @options.agent_checks
+      @results[@options.target_server]['vulns']['amicontained'].each do |node, result|
+        @html_report_file.puts "<tr><td>Am I Contained Output</td><td>#{node}</td><td>#{result}</td></tr>"   
+      end
+    end
+
     @html_report_file.puts "</table>"
 
 
