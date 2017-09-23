@@ -10,11 +10,14 @@ module KubeAutoAnalyzer
 
     nodes = Array.new
     @client.get_nodes.each do |node|
-      nodes << node['status']['addresses'][0]['address']
+      unless node.spec.taints.to_s =~ /NoSchedule/
+        nodes << node
+      end
     end
     
     nodes.each do |nod|
       node_hostname = nod.metadata.labels['kubernetes.io/hostname']
+      node_ip = nod['status']['addresses'][0]['address']
       container_name = "kaa" + node_hostname
       pod = Kubeclient::Resource.new
       pod.metadata = {}
@@ -38,7 +41,7 @@ module KubeAutoAnalyzer
         end
         @log.debug ("started amicontained pod")
         results = @client.get_pod_log(container_name,"default")
-        @results[target]['vulns']['amicontained'][nod] = results
+        @results[target]['vulns']['amicontained'][node_ip] = results
       ensure
         @client.delete_pod(container_name,"default")
       end
