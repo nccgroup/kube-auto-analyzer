@@ -143,6 +143,18 @@ module KubeAutoAnalyzer
         else
           @results[target]['kubelet_checks'][node_hostname]['CIS 2.1.13 - Ensure that the --cadvisor-port argument is set to 0'] = "Pass"
         end
+
+        unless kubelet_proc =~ /--feature-gates=RotateKubeletClientCertificate=true/
+          @results[target]['kubelet_checks'][node_hostname]['CIS 2.1.14 - Ensure that the RotateKubeletClientCertificate argument is set to true'] = "Fail"
+        else
+          @results[target]['kubelet_checks'][node_hostname]['CIS 2.1.14 - Ensure that the RotateKubeletClientCertificate argument is set to true'] = "Pass"
+        end
+
+        unless kubelet_proc =~ /--feature-gates=RotateKubeletServerCertificate=true/
+          @results[target]['kubelet_checks'][node_hostname]['CIS 2.1.15 - Ensure that the RotateKubeletServerCertificate argument is set to true'] = "Fail"
+        else
+          @results[target]['kubelet_checks'][node_hostname]['CIS 2.1.15 - Ensure that the RotateKubeletServerCertificate argument is set to true'] = "Pass"
+        end
       #Need an ensure block here to make sure that the pod is deleted after its run  
       ensure
         @client.delete_pod(container_name,"default")

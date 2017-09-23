@@ -1,6 +1,6 @@
 # Kubernetes Auto Analyzer
 
-This is a configuration analyzer tool intended to automate the process of reviewing Kubernetes installations against the CIS Kubernetes 1.6 Benchmark.
+This is a configuration analyzer tool intended to automate the process of reviewing Kubernetes installations against the CIS Kubernetes 1.7 Benchmark.
 
 It's currently under heavy development so use at your own risk :)
 
@@ -22,11 +22,11 @@ One of the challenges with scripting these checks is that there are many differe
 
 ### Master Node Security Configuration
 
- - Section 1.1 - API Server - All Checks Implemented (31)
+ - Section 1.1 - API Server - All bar one Checks Implemented (34)
  - Section 1.2 - Scheduler - All Checks Implemented (1)
  - Section 1.3 - Controller Manager - All Checks Implemented (6)
  - Section 1.4 - Configuration Files - TBC (need separate logic to access filesystems and check permissions on the master node)
- - Section 1.5 - etcd - All Checks Implemented (6)
+ - Section 1.5 - etcd - All bar one Checks Implemented (8)
  - Section 1.6 - General Security Primitives - Not implementing directly.  These checks are unscored so not really suitable for automated scanning.
 
 ### Worker Node Security Configuration
@@ -44,12 +44,13 @@ One of the challenges with scripting these checks is that there are many differe
 We're starting to implement checks for common Kubernetes vulnerabilities.  Some of these can be derived from the CIS compliance checks, but in order to get more of a chance of picking them up, we're implementing direct checks as well.
 
  - Unauthenticated Kubelet check.  Test in place for external access and internal access (via kaa-agent)
- - Unauthenticated API access Check. TBD
- - cluster-admin service token.  TBD
+ - Unauthenticated API access Check. Test in place for external and internal access.
+ - cluster-admin service token.  Test in place for cluster-admin token exposure
+ - Container Default containment checks.  Based on Jessie Frazelle's [amicontained](https://github.com/jessfraz/amicontained) We use the agent to check what the default containerization options are for a pod running on the cluster.
 
 ## Tested With
 
- - Kubeadm 1.5,1.6 - Works ok  
+ - Kubeadm 1.5,1.6,1.7 - Works ok  
  - kube-aws - Works ok
  - kismatic - Works ok
  - GCE - Doesn't really work at all.  GCE doesn't run the control plane components as pods, so we can't use this approach.

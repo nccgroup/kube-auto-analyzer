@@ -385,6 +385,19 @@ module KubeAutoAnalyzer
       @results[target]['etcd']['CIS 1.5.6 - Ensure that the --peer-auto-tls argument is not set to true'] = "Pass"
     end
 
+    #This isn't quite right as we should really check the dir. but as that's not easily done lets start with an existence check
+    unless etcd_command_line.index{|line| line =~ /--wall-dir/}
+      @results[target]['etcd']['CIS 1.5.7 - Ensure that the --wal-dir argument is set as appropriate'] = "Fail"
+    else
+      @results[target]['etcd']['CIS 1.5.7 - Ensure that the --wal-dir argument is set as appropriate'] = "Pass"
+    end
+
+    unless etcd_command_line.index{|line| line =~ /--max-wals=0/}
+      @results[target]['etcd']['CIS 1.5.8 - Ensure that the --max-wals argument is set to 0'] = "Fail"
+    else
+      @results[target]['etcd']['CIS 1.5.8 - Ensure that the --max-wals argument is set to 0'] = "Pass"
+    end
+
 
 
     @results[target]['evidence']['etcd'] = etcd_command_line
