@@ -10,7 +10,6 @@ ADD process-checker.rb /
 ADD kubelet-checker.rb /
 ADD api-server-checker.rb /
 ADD service-token-checker.rb /
+ADD amicontained.rb /
 
-#Get AmIcontained
-RUN curl -OL https://github.com/jessfraz/amicontained/releases/download/v0.0.8/amicontained-linux-amd64 && \
-cp amicontained-linux-amd64 /usr/local/bin/amicontained && chmod +x /usr/local/bin/amicontained
+RUN chmod +x /amicontained.rb

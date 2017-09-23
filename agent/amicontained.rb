@@ -2,7 +2,7 @@
 #Checks in this script based on amicontained by Jessie Frazelle
 # https://github.com/jessfraz/amicontained/
 
-require 'cap2'
+require 'json'
 
 results = Hash.new
 
@@ -10,7 +10,7 @@ results = Hash.new
 #Runtime will either be Docker or rkt for now kubepods == docker in all likelihood
 runtime = File.open('/proc/self/cgroup').read
 
-if runtime =~ "kubepods"
+if runtime =~ /kubepods/
   results['runtime'] = "kubernetes"
 else
   results['runtime'] = "unknown"
@@ -19,7 +19,7 @@ end
 #Host PID Namespace Detection
 hostpid = File.open('/proc/1/sched').read
 
-if hostpid =~ '(1,'
+if hostpid =~ /\(1,/
   results['hostpid'] = "true"
 else
   results['hostpid'] = "false"
@@ -31,7 +31,7 @@ apparmor = File.open('/proc/self/attr/current').read
 if apparmor.length > 1
   results['apparmor'] = apparmor
 else
-  results['apparmor'] = "false"
+  results['apparmor'] = "none"
 end
 
 
@@ -46,12 +46,12 @@ end
 
 
 #Check Capabilities, This will be hacky!
-cap_input = File.open('/proc/1/status')
+cap_input = File.open('/proc/1/status').read
 
-cap_inh = ("capsh --decode=#{(cap_input[/CapInh:\t\d{16}/].split(/\t/)[1])}")
-cap_eff = ("capsh --decode=#{(cap_input[/CapEff:\t\d{16}/].split(/\t/)[1])}")
-cap_per = ("capsh --decode=#{(cap_input[/CapPer:\t\d{16}/].split(/\t/)[1])}")
-cap_bnd = ("capsh --decode=#{(cap_input[/CapBnd:\t\d{16}/].split(/\t/)[1])}")
+cap_inh = (`capsh --decode=#{(cap_input[/CapInh:\t\h{16}/].split(/\t/)[1])}`)
+cap_eff = (`capsh --decode=#{(cap_input[/CapEff:\t\h{16}/].split(/\t/)[1])}`)
+cap_per = (`capsh --decode=#{(cap_input[/CapPrm:\t\h{16}/].split(/\t/)[1])}`)
+cap_bnd = (`capsh --decode=#{(cap_input[/CapBnd:\t\h{16}/].split(/\t/)[1])}`)
 
 
 if cap_inh.to_s == "true"

@@ -270,6 +270,22 @@ module KubeAutoAnalyzer
       @html_report_file.puts "</table>"
     end
 
+    if @options.agent_checks
+      @html_report_file.puts '<br><h3>Container Configuration checks</h3>'
+      @results[@options.target_server]['vulns']['amicontained'].each do |node, result|
+        @html_report_file.puts "<br><b>#{node} Container Checks</b>"
+        @html_report_file.puts "<table><thead><tr><th>Container item</th><th>Result</th></thead>"
+        @html_report_file.puts "<tr><td>Runtime in Use</td><td>#{result['runtime']}</td></tr>"
+        @html_report_file.puts "<tr><td>Host PID namespace used?</td><td>#{result['hostpid']}</td></tr>"
+        @html_report_file.puts "<tr><td>AppArmor Profile</td><td>#{result['apparmor']}</td></tr>"
+        @html_report_file.puts "<tr><td>User Namespaces in use?</td><td>#{result['uid_map']}</td></tr>"
+        @html_report_file.puts "<tr><td>Inherited Capabilities</td><td>#{result['cap_inh']}</td></tr>"
+        @html_report_file.puts "<tr><td>Effective Capabilities</td><td>#{result['cap_eff']}</td></tr>"
+        @html_report_file.puts "<tr><td>Permitted Capabilities</td><td>#{result['cap_per']}</td></tr>"
+        @html_report_file.puts "<tr><td>Bounded Capabilities</td><td>#{result['cap_bnd']}</td></tr>"
+        @html_report_file.puts "</table>"
+      end
+    end
 
 
 

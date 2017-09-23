@@ -3,7 +3,7 @@ module KubeAutoAnalyzer
   #This is somewhat awkward placement.  Deployment mechanism sits more with the agent checks
   #But from a "what it's looking for" perspective, its more with the vuln. checks as there's not a CIS check for it.
   def self.check_amicontained
-
+    require 'json'
     @log.debug("Doing Am I contained check")
     target = @options.target_server
     @results[target]['vulns']['amicontained'] = Hash.new
@@ -27,7 +27,7 @@ module KubeAutoAnalyzer
       pod.spec.restartPolicy = "Never"
       pod.spec.containers = {}
       pod.spec.containers = [{name: "kubeautoanalyzerkubelettest", image: "raesene/kaa-agent:latest"}]
-      pod.spec.containers[0].args = ["/usr/local/bin/amicontained"]
+      pod.spec.containers[0].args = ["/amicontained.rb"]
       pod.spec.nodeselector = {}
       pod.spec.nodeselector['kubernetes.io/hostname'] = node_hostname
       begin
@@ -40,7 +40,7 @@ module KubeAutoAnalyzer
           retry
         end
         @log.debug ("started amicontained pod")
-        results = @client.get_pod_log(container_name,"default")
+        results = JSON.parse(@client.get_pod_log(container_name,"default"))
         @results[target]['vulns']['amicontained'][node_ip] = results
       ensure
         @client.delete_pod(container_name,"default")
