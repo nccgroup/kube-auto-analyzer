@@ -1,4 +1,5 @@
 module KubeAutoAnalyzer
+
   def self.report
     @log.debug("Starting Report")
     @report_file.puts "Kubernetes Analyzer"
@@ -51,7 +52,7 @@ module KubeAutoAnalyzer
   end
 
   def self.html_report
-    require 'chartkick'
+
     logo_path = File.join(__dir__, "data-logo.b64")
     logo = File.open(logo_path).read
     @log.debug("Starting HTML Report")
@@ -115,9 +116,21 @@ module KubeAutoAnalyzer
     @html_report_file.puts "<h1>Kubernetes Auto Analyzer</h1>"
     @html_report_file.puts "<br><b>Server Reviewed : </b> #{@options.target_server}"
     @html_report_file.puts '<br><br><div class="master-node"><h2>Master Node Results</h2><br>'
+    #Charting setup counts for the passes and fails
+    api_server_pass = 0
+    api_server_fail = 0
+    @results[@options.target_server]['api_server'].each do |test, result|
+      if result == "Pass"
+        api_server_pass  = api_server_pass + 1
+      elsif result == "Fail"
+        api_server_fail = api_server_fail + 1
+      end
+    end
+    @html_report_file.puts '<div id="chart-1" style="height: 300px; width: 300px; text-align: center; color: #999; line-height: 300px; font-size: 14px;font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;"></div>'
+    @html_report_file.puts '<script>new Chartkick.PieChart("chart-1", {"pass": ' + api_server_pass.to_s + ', "fail": ' + api_server_fail.to_s + '}, {"colors":["green","red"], "library":{"title":{"text":"API Server Results"},"chart":{"backgroundColor":"#F5F5F5"}}})</script>'
     #Test Chart before we try the real stuff
-    @html_report_file.puts '<div id="chart-1" style="height: 300px"></div>'
-    @html_report_file.puts '<script>new Chartkick.LineChart("chart-1", {"2013-02-10 00:00:00 -0800": 11, "2013-02-11 00:00:00 -0800": 6})</script>'
+    #@html_report_file.puts '<div id="chart-1" style="height: 300px"></div>'
+    #@html_report_file.puts '<script>new Chartkick.LineChart("chart-1", {"2013-02-10 00:00:00 -0800": 11, "2013-02-11 00:00:00 -0800": 6})</script>'
     #End of test chart
     @html_report_file.puts "<h2>API Server</h2>"
     @html_report_file.puts "<table><thead><tr><th>Check</th><th>result</th></tr></thead>"
