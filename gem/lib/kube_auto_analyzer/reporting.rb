@@ -101,6 +101,15 @@ module KubeAutoAnalyzer
         padding: 6px 6px 6px 12px;
         color: #333333;
         }
+        .container{
+          display: flex;
+        } 
+        .fixed{
+          width: 300px;
+        }
+        .flex-item{
+          flex-grow: 1;
+        }
     </style>
   </head>
   <body>
@@ -126,12 +135,54 @@ module KubeAutoAnalyzer
         api_server_fail = api_server_fail + 1
       end
     end
-    @html_report_file.puts '<div id="chart-1" style="height: 300px; width: 300px; text-align: center; color: #999; line-height: 300px; font-size: 14px;font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;"></div>'
+
+    #Not a lot of point in scheduler when there's only one check...
+    #scheduler_pass = 0
+    #scheduler_fail = 0
+    #@results[@options.target_server]['scheduler'].each do |test, result|
+    #  if result == "Pass"
+    #    scheduler_pass  = scheduler_pass + 1
+    #  elsif result == "Fail"
+    #     scheduler_fail = scheduler_fail + 1
+    #  end
+    #end
+
+    controller_manager_pass = 0
+    controller_manager_fail = 0
+    @results[@options.target_server]['controller_manager'].each do |test, result|
+      if result == "Pass"
+        controller_manager_pass  = controller_manager_pass + 1
+      elsif result == "Fail"
+        controller_manager_fail = controller_manager_fail + 1
+      end
+    end
+
+    etcd_pass = 0
+    etcd_fail = 0
+    @results[@options.target_server]['etcd'].each do |test, result|
+      if result == "Pass"
+        etcd_pass  = etcd_pass + 1
+      elsif result == "Fail"
+        etcd_fail = etcd_fail + 1
+      end
+    end
+
+    #Start of Chart Divs
+    @html_report_file.puts '<div class="container">'
+    #API Server Chart
+    @html_report_file.puts '<div class="fixed" id="chart-1" style="height: 300px; width: 300px; text-align: center; color: #999; line-height: 300px; font-size: 14px;font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;"></div>'
     @html_report_file.puts '<script>new Chartkick.PieChart("chart-1", {"pass": ' + api_server_pass.to_s + ', "fail": ' + api_server_fail.to_s + '}, {"colors":["green","red"], "library":{"title":{"text":"API Server Results"},"chart":{"backgroundColor":"#F5F5F5"}}})</script>'
-    #Test Chart before we try the real stuff
-    #@html_report_file.puts '<div id="chart-1" style="height: 300px"></div>'
-    #@html_report_file.puts '<script>new Chartkick.LineChart("chart-1", {"2013-02-10 00:00:00 -0800": 11, "2013-02-11 00:00:00 -0800": 6})</script>'
-    #End of test chart
+    #Scheduler Chart
+    #@html_report_file.puts '<div class="flex-item" id="chart-2" style="height: 300px; width: 300px; text-align: center; color: #999; line-height: 300px; font-size: 14px;font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;"></div>'
+    #@html_report_file.puts '<script>new Chartkick.PieChart("chart-2", {"pass": ' + scheduler_pass.to_s + ', "fail": ' + scheduler_fail.to_s + '}, {"colors":["green","red"], "library":{"title":{"text":"Scheduler Results"},"chart":{"backgroundColor":"#F5F5F5"}}})</script>'
+    #Controller Manager Chart
+    @html_report_file.puts '<div class="fixed" id="chart-2" style="height: 300px; width: 300px; text-align: center; color: #999; line-height: 300px; font-size: 14px;font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;"></div>'
+    @html_report_file.puts '<script>new Chartkick.PieChart("chart-2", {"pass": ' + controller_manager_pass.to_s + ', "fail": ' + controller_manager_fail.to_s + '}, {"colors":["green","red"], "library":{"title":{"text":"Controller Manager Results"},"chart":{"backgroundColor":"#F5F5F5"}}})</script>'
+    #etcd Chart
+    @html_report_file.puts '<div class="fixed" id="chart-3" style="height: 300px; width: 300px; text-align: center; color: #999; line-height: 300px; font-size: 14px;font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;"></div>'
+    @html_report_file.puts '<script>new Chartkick.PieChart("chart-3", {"pass": ' + etcd_pass.to_s + ', "fail": ' + etcd_fail.to_s + '}, {"colors":["green","red"], "library":{"title":{"text":"etcd Results"},"chart":{"backgroundColor":"#F5F5F5"}}})</script>'
+    #End of Chart Divs
+    @html_report_file.puts '</div>'
     @html_report_file.puts "<h2>API Server</h2>"
     @html_report_file.puts "<table><thead><tr><th>Check</th><th>result</th></tr></thead>"
     @results[@options.target_server]['api_server'].each do |test, result|      
