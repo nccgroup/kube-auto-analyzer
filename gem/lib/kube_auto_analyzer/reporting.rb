@@ -51,6 +51,7 @@ module KubeAutoAnalyzer
   end
 
   def self.html_report
+    require 'chartkick'
     logo_path = File.join(__dir__, "data-logo.b64")
     logo = File.open(logo_path).read
     @log.debug("Starting HTML Report")
@@ -104,10 +105,20 @@ module KubeAutoAnalyzer
   <body>
   
     '
+    chartkick_path = File.join(__dir__, "js_files/chartkick.js")
+    chartkick = File.open(chartkick_path).read
+    highcharts_path = File.join(__dir__, "js_files/highcharts.js")
+    highcharts = File.open(highcharts_path).read
+    @html_report_file.puts "<script>#{chartkick}</script>"
+    @html_report_file.puts "<script>#{highcharts}</script>"
     @html_report_file.puts '<img width="100" height="100" align="right"' + " src=#{logo} />"
     @html_report_file.puts "<h1>Kubernetes Auto Analyzer</h1>"
     @html_report_file.puts "<br><b>Server Reviewed : </b> #{@options.target_server}"
     @html_report_file.puts '<br><br><div class="master-node"><h2>Master Node Results</h2><br>'
+    #Test Chart before we try the real stuff
+    @html_report_file.puts '<div id="chart-1" style="height: 300px"></div>'
+    @html_report_file.puts '<script>new Chartkick.LineChart("chart-1", {"2013-02-10 00:00:00 -0800": 11, "2013-02-11 00:00:00 -0800": 6})</script>'
+    #End of test chart
     @html_report_file.puts "<h2>API Server</h2>"
     @html_report_file.puts "<table><thead><tr><th>Check</th><th>result</th></tr></thead>"
     @results[@options.target_server]['api_server'].each do |test, result|      
