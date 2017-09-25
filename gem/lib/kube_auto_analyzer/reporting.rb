@@ -242,6 +242,32 @@ module KubeAutoAnalyzer
     @html_report_file.puts "</table></div>"
     if @options.agent_checks
       @html_report_file.puts '<br><br><div class="worker-node"><h2>Worker Node Results</h2>'
+
+      #Start of Chart Divs
+      @html_report_file.puts '<div class="container">'
+      @results[@options.target_server]['kubelet_checks'].each do |node, results|
+        node_kubelet_pass = 0
+        node_kubelet_fail = 0
+        results.each do |test, result|
+          if result == "Fail"
+            node_kubelet_fail = node_kubelet_fail + 1
+          elsif result == "Pass"
+            node_kubelet_pass = node_kubelet_pass + 1
+          end
+        end
+
+
+        #Create the Chart
+        @html_report_file.puts '<div class="fixed" id="' + node + '" style="height: 300px; width: 300px; text-align: center; color: #999; line-height: 300px; font-size: 14px;font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;"></div>'
+        @html_report_file.puts '<script>new Chartkick.PieChart("' + node + '", {"pass": ' + node_kubelet_pass.to_s + ', "fail": ' + node_kubelet_fail.to_s + '}, {"colors":["green","red"], "library":{"title":{"text":"' + node + ' Kubelet Results"},"chart":{"backgroundColor":"#F5F5F5"}}})</script>'
+
+      end
+
+
+
+      #End of Chart Divs
+      @html_report_file.puts '</div>'
+
       @results[@options.target_server]['kubelet_checks'].each do |node, results|
         @html_report_file.puts "<br><b>#{node} Kubelet Checks</b>"
         @html_report_file.puts "<table><thead><tr><th>Check</th><th>result</th></tr></thead>"
