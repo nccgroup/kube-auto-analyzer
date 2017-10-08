@@ -21,221 +21,230 @@ module KubeAutoAnalyzer
     
     api_server_command_line = @api_server['spec']['containers'][0]['command']
 
-    #Check for Allow Privileged
-    unless api_server_command_line.index{|line| line =~ /--allow-privileged=false/}
-      @results[target]['api_server']['CIS 1.1.1 - Ensure that the --allow-privileged argument is set to false'] = "Fail"
-    else
-      @results[target]['api_server']['CIS 1.1.1 - Ensure that the --allow-privileged argument is set to false'] = "Pass"
-    end
-
     #Check for Anonymous Auth
     unless api_server_command_line.index{|line| line =~ /--anonymous-auth=false/}
-      @results[target]['api_server']['CIS 1.1.2 - Ensure that the --anonymous-auth argument is set to false'] = "Fail"
+      @results[target]['api_server']['CIS 1.1.1 - Ensure that the --anonymous-auth argument is set to false'] = "Fail"
     else
-      @results[target]['api_server']['CIS 1.1.2 - Ensure that the --anonymous-auth argument is set to false'] = "Pass"
+      @results[target]['api_server']['CIS 1.1.1 - Ensure that the --anonymous-auth argument is set to false'] = "Pass"
     end
 
     #Check for Basic Auth
     if api_server_command_line.index{|line| line =~ /--basic-auth-file/}
-      @results[target]['api_server']['CIS 1.1.3 - Ensure that the --basic-auth-file argument is not set'] = "Fail"
+      @results[target]['api_server']['CIS 1.1.2 - Ensure that the --basic-auth-file argument is not set'] = "Fail"
     else
-      @results[target]['api_server']['CIS 1.1.3 - Ensure that the --basic-auth-file argument is not set'] = "Pass"
+      @results[target]['api_server']['CIS 1.1.2 - Ensure that the --basic-auth-file argument is not set'] = "Pass"
     end
 
     #Check for Insecure Allow Any Token
     if api_server_command_line.index{|line| line =~ /--insecure-allow-any-token/}
-      @results[target]['api_server']['CIS 1.1.4 - Ensure that the --insecure-allow-any-token argument is not set'] = "Fail"
+      @results[target]['api_server']['CIS 1.1.3 - Ensure that the --insecure-allow-any-token argument is not set'] = "Fail"
     else
-      @results[target]['api_server']['CIS 1.1.4 - Ensure that the --insecure-allow-any-token argument is not set'] = "Pass"
+      @results[target]['api_server']['CIS 1.1.3 - Ensure that the --insecure-allow-any-token argument is not set'] = "Pass"
     end
 
     #Check to confirm that Kubelet HTTPS isn't set to false
     if api_server_command_line.index{|line| line =~ /--kubelet-https=false/}
-      @results[target]['api_server']['CIS 1.1.5 - Ensure that the --kubelet-https argument is set to true'] = "Fail"
+      @results[target]['api_server']['CIS 1.1.4 - Ensure that the --kubelet-https argument is set to true'] = "Fail"
     else
-      @results[target]['api_server']['CIS 1.1.5 - Ensure that the --kubelet-https argument is set to true'] = "Pass"
+      @results[target]['api_server']['CIS 1.1.4 - Ensure that the --kubelet-https argument is set to true'] = "Pass"
     end
 
     #Check for Insecure Bind Address
     if api_server_command_line.index{|line| line =~ /--insecure-bind-address/}
-      @results[target]['api_server']['CIS 1.1.6 - Ensure that the --insecure-bind-address argument is not set'] = "Fail"
+      @results[target]['api_server']['CIS 1.1.5 - Ensure that the --insecure-bind-address argument is not set'] = "Fail"
     else
-      @results[target]['api_server']['CIS 1.1.6 - Ensure that the --insecure-bind-address argument is not set'] = "Pass"
+      @results[target]['api_server']['CIS 1.1.5 - Ensure that the --insecure-bind-address argument is not set'] = "Pass"
     end
 
     #Check for Insecure Bind port
     unless api_server_command_line.index{|line| line =~ /--insecure-port=0/}
-      @results[target]['api_server']['CIS 1.1.7 - Ensure that the --insecure-port argument is set to 0'] = "Fail"
+      @results[target]['api_server']['CIS 1.1.6 - Ensure that the --insecure-port argument is set to 0'] = "Fail"
     else
-      @results[target]['api_server']['CIS 1.1.7 - Ensure that the --insecure-port argument is set to 0'] = "Pass"
+      @results[target]['api_server']['CIS 1.1.6 - Ensure that the --insecure-port argument is set to 0'] = "Pass"
     end
 
     #Check Secure Port isn't set to 0
     if api_server_command_line.index{|line| line =~ /--secure-port=0/}
-      @results[target]['api_server']['CIS 1.1.8 - Ensure that the --secure-port argument is not set to 0'] = "Fail"
+      @results[target]['api_server']['CIS 1.1.7 - Ensure that the --secure-port argument is not set to 0'] = "Fail"
     else
-      @results[target]['api_server']['CIS 1.1.8 - Ensure that the --secure-port argument is not set to 0'] = "Pass"
+      @results[target]['api_server']['CIS 1.1.7 - Ensure that the --secure-port argument is not set to 0'] = "Pass"
     end
 
     #
     unless api_server_command_line.index{|line| line =~ /--profiling=false/}
-      @results[target]['api_server']['CIS 1.1.9 - Ensure that the --profiling argument is set to false'] = "Fail"
+      @results[target]['api_server']['CIS 1.1.8 - Ensure that the --profiling argument is set to false'] = "Fail"
     else
-      @results[target]['api_server']['CIS 1.1.9 - Ensure that the --profiling argument is set to false'] = "Pass"
+      @results[target]['api_server']['CIS 1.1.8 - Ensure that the --profiling argument is set to false'] = "Pass"
     end
 
     unless api_server_command_line.index{|line| line =~ /--repair-malformed-updates/}
-      @results[target]['api_server']['CIS 1.1.10 - Ensure that the --repair-malformed-updates argument is set to false'] = "Fail"
+      @results[target]['api_server']['CIS 1.1.9 - Ensure that the --repair-malformed-updates argument is set to false'] = "Fail"
     else
-      @results[target]['api_server']['CIS 1.1.10 - Ensure that the --repair-malformed-updates argument is set to false'] = "Pass"
+      @results[target]['api_server']['CIS 1.1.9 - Ensure that the --repair-malformed-updates argument is set to false'] = "Pass"
     end
 
     if api_server_command_line.index{|line| line =~ /--admission-control\S*AlwaysAdmit/}
-      @results[target]['api_server']['CIS 1.1.11 - Ensure that the admission control policy is not set to AlwaysAdmit'] = "Fail"
+      @results[target]['api_server']['CIS 1.1.10 - Ensure that the admission control policy is not set to AlwaysAdmit'] = "Fail"
     else
-      @results[target]['api_server']['CIS 1.1.11 - Ensure that the admission control policy is not set to AlwaysAdmit'] = "Pass"
+      @results[target]['api_server']['CIS 1.1.10 - Ensure that the admission control policy is not set to AlwaysAdmit'] = "Pass"
     end
 
     unless api_server_command_line.index{|line| line =~ /--admission-control\S*AlwaysPullImages/}
-      @results[target]['api_server']['CIS 1.1.12 - Ensure that the admission control policy is set to AlwaysPullImages'] = "Fail"
+      @results[target]['api_server']['CIS 1.1.11 - Ensure that the admission control policy is set to AlwaysPullImages'] = "Fail"
     else
-      @results[target]['api_server']['CIS 1.1.12 - Ensure that the admission control policy is set to AlwaysPullImages'] = "Pass"
+      @results[target]['api_server']['CIS 1.1.11 - Ensure that the admission control policy is set to AlwaysPullImages'] = "Pass"
     end
 
     unless api_server_command_line.index{|line| line =~ /--admission-control\S*DenyEscalatingExec/}
-      @results[target]['api_server']['CIS 1.1.13 - Ensure that the admission control policy is set to DenyEscalatingExec'] = "Fail"
+      @results[target]['api_server']['CIS 1.1.12 - Ensure that the admission control policy is set to DenyEscalatingExec'] = "Fail"
     else
-      @results[target]['api_server']['CIS 1.1.13 - Ensure that the admission control policy is set to DenyEscalatingExec'] = "Pass"
+      @results[target]['api_server']['CIS 1.1.12 - Ensure that the admission control policy is set to DenyEscalatingExec'] = "Pass"
     end
 
     unless api_server_command_line.index{|line| line =~ /--admission-control\S*SecurityContextDeny/}
-      @results[target]['api_server']['CIS 1.1.14 - Ensure that the admission control policy is set to SecurityContextDeny'] = "Fail"
+      @results[target]['api_server']['CIS 1.1.13 - Ensure that the admission control policy is set to SecurityContextDeny'] = "Fail"
     else
-      @results[target]['api_server']['CIS 1.1.14 - Ensure that the admission control policy is set to SecurityContextDeny'] = "Pass"
+      @results[target]['api_server']['CIS 1.1.13 - Ensure that the admission control policy is set to SecurityContextDeny'] = "Pass"
     end
 
     unless api_server_command_line.index{|line| line =~ /--admission-control\S*NamespaceLifecycle/}
-      @results[target]['api_server']['CIS 1.1.15 - Ensure that the admission control policy is set to NamespaceLifecycle'] = "Fail"
+      @results[target]['api_server']['CIS 1.1.14 - Ensure that the admission control policy is set to NamespaceLifecycle'] = "Fail"
     else
-      @results[target]['api_server']['CIS 1.1.15 - Ensure that the admission control policy is set to NamespaceLifecycle'] = "Pass"
+      @results[target]['api_server']['CIS 1.1.14 - Ensure that the admission control policy is set to NamespaceLifecycle'] = "Pass"
     end
 
     unless api_server_command_line.index{|line| line =~ /--audit-log-path/}
-      @results[target]['api_server']['CIS 1.1.16 - Ensure that the --audit-log-path argument is set as appropriate'] = "Fail"
+      @results[target]['api_server']['CIS 1.1.15 - Ensure that the --audit-log-path argument is set as appropriate'] = "Fail"
     else
-      @results[target]['api_server']['CIS 1.1.16 - Ensure that the --audit-log-path argument is set as appropriate'] = "Pass"
+      @results[target]['api_server']['CIS 1.1.15 - Ensure that the --audit-log-path argument is set as appropriate'] = "Pass"
     end
 
     #TODO: This check needs to do something with the number of days but for now lets just check whether it's present.
     unless api_server_command_line.index{|line| line =~ /--audit-log-maxage/}
-      @results[target]['api_server']['CIS 1.1.17 - Ensure that the --audit-log-maxage argument is set to 30 or as appropriate'] = "Fail"
+      @results[target]['api_server']['CIS 1.1.16 - Ensure that the --audit-log-maxage argument is set to 30 or as appropriate'] = "Fail"
     else
-      @results[target]['api_server']['CIS 1.1.17 - Ensure that the --audit-log-maxage argument is set to 30 or as appropriate'] = "Pass"
+      @results[target]['api_server']['CIS 1.1.16 - Ensure that the --audit-log-maxage argument is set to 30 or as appropriate'] = "Pass"
     end
 
     #TODO: This check needs to do something with the number of backups but for now lets just check whether it's present.
     unless api_server_command_line.index{|line| line =~ /--audit-log-maxbackup/}
-      @results[target]['api_server']['CIS 1.1.18 - Ensure that the --audit-log-maxbackup argument is set to 10 or as appropriate'] = "Fail"
+      @results[target]['api_server']['CIS 1.1.17 - Ensure that the --audit-log-maxbackup argument is set to 10 or as appropriate'] = "Fail"
     else
-      @results[target]['api_server']['CIS 1.1.18 - Ensure that the --audit-log-maxbackup argument is set to 10 or as appropriate'] = "Pass"
+      @results[target]['api_server']['CIS 1.1.17 - Ensure that the --audit-log-maxbackup argument is set to 10 or as appropriate'] = "Pass"
     end
 
     #TODO: This check needs to do something with the size of backups but for now lets just check whether it's present.
     unless api_server_command_line.index{|line| line =~ /--audit-log-maxsize/}
-      @results[target]['api_server']['CIS 1.1.19 - Ensure that the --audit-log-maxsize argument is set to 100 or as appropriate'] = "Fail"
+      @results[target]['api_server']['CIS 1.1.18 - Ensure that the --audit-log-maxsize argument is set to 100 or as appropriate'] = "Fail"
     else
-      @results[target]['api_server']['CIS 1.1.19 - Ensure that the --audit-log-maxsize argument is set to 100 or as appropriate'] = "Pass"
+      @results[target]['api_server']['CIS 1.1.18 - Ensure that the --audit-log-maxsize argument is set to 100 or as appropriate'] = "Pass"
     end
 
     if api_server_command_line.index{|line| line =~ /--authorization-mode\S*AlwaysAllow/}
-      @results[target]['api_server']['CIS 1.1.20 - Ensure that the --authorization-mode argument is not set to AlwaysAllow'] = "Fail"
+      @results[target]['api_server']['CIS 1.1.19 - Ensure that the --authorization-mode argument is not set to AlwaysAllow'] = "Fail"
     else
-      @results[target]['api_server']['CIS 1.1.20 - Ensure that the --authorization-mode argument is not set to AlwaysAllow'] = "Pass"
+      @results[target]['api_server']['CIS 1.1.19 - Ensure that the --authorization-mode argument is not set to AlwaysAllow'] = "Pass"
     end
 
     if api_server_command_line.index{|line| line =~ /--token-auth-file/}
-      @results[target]['api_server']['CIS 1.1.21 - Ensure that the --token-auth-file argument is not set'] = "Fail"
+      @results[target]['api_server']['CIS 1.1.20 - Ensure that the --token-auth-file argument is not set'] = "Fail"
     else
-      @results[target]['api_server']['CIS 1.1.21 - Ensure that the --token-auth-file argument is not set'] = "Pass"
+      @results[target]['api_server']['CIS 1.1.20 - Ensure that the --token-auth-file argument is not set'] = "Pass"
     end
 
     unless api_server_command_line.index{|line| line =~ /--kubelet-certificate-authority/}
-      @results[target]['api_server']['CIS 1.1.22 - Ensure that the --kubelet-certificate-authority argument is set as appropriate'] = "Fail"
+      @results[target]['api_server']['CIS 1.1.21 - Ensure that the --kubelet-certificate-authority argument is set as appropriate'] = "Fail"
     else
-      @results[target]['api_server']['CIS 1.1.22 - Ensure that the --kubelet-certificate-authority argument is set as appropriate'] = "Pass"
+      @results[target]['api_server']['CIS 1.1.21 - Ensure that the --kubelet-certificate-authority argument is set as appropriate'] = "Pass"
     end
 
     unless (api_server_command_line.index{|line| line =~ /--kubelet-client-certificate/} && api_server_command_line.index{|line| line =~ /--kubelet-client-key/})
-      @results[target]['api_server']['CIS 1.1.23 - Ensure that the --kubelet-client-certificate and --kubelet-client-key arguments are set as appropriate'] = "Fail"
+      @results[target]['api_server']['CIS 1.1.22 - Ensure that the --kubelet-client-certificate and --kubelet-client-key arguments are set as appropriate'] = "Fail"
     else
-      @results[target]['api_server']['CIS 1.1.23 - Ensure that the --kubelet-client-certificate and --kubelet-client-key arguments are set as appropriate'] = "Pass"
+      @results[target]['api_server']['CIS 1.1.22 - Ensure that the --kubelet-client-certificate and --kubelet-client-key arguments are set as appropriate'] = "Pass"
     end
 
     unless api_server_command_line.index{|line| line =~ /--service-account-lookup=true/}
-      @results[target]['api_server']['CIS 1.1.24 - Ensure that the --service-account-lookup argument is set to true'] = "Fail"
+      @results[target]['api_server']['CIS 1.1.23 - Ensure that the --service-account-lookup argument is set to true'] = "Fail"
     else
-      @results[target]['api_server']['CIS 1.1.24 - Ensure that the --service-account-lookup argument is set to true'] = "Pass"
+      @results[target]['api_server']['CIS 1.1.23 - Ensure that the --service-account-lookup argument is set to true'] = "Pass"
     end
 
     unless api_server_command_line.index{|line| line =~ /--admission-control\S*PodSecurityPolicy/}
-      @results[target]['api_server']['CIS 1.1.25 - Ensure that the admission control policy is set to PodSecurityPolicy'] = "Fail"
+      @results[target]['api_server']['CIS 1.1.24 - Ensure that the admission control policy is set to PodSecurityPolicy'] = "Fail"
     else
-      @results[target]['api_server']['CIS 1.1.25 - Ensure that the admission control policy is set to PodSecurityPolicy'] = "Pass"
+      @results[target]['api_server']['CIS 1.1.24 - Ensure that the admission control policy is set to PodSecurityPolicy'] = "Pass"
     end
 
     unless api_server_command_line.index{|line| line =~ /--service-account-key-file/}
-      @results[target]['api_server']['CIS 1.1.26 - Ensure that the --service-account-key-file argument is set as appropriate'] = "Fail"
+      @results[target]['api_server']['CIS 1.1.25 - Ensure that the --service-account-key-file argument is set as appropriate'] = "Fail"
     else
-      @results[target]['api_server']['CIS 1.1.26 - Ensure that the --service-account-key-file argument is set as appropriate'] = "Pass"
+      @results[target]['api_server']['CIS 1.1.25 - Ensure that the --service-account-key-file argument is set as appropriate'] = "Pass"
     end
 
     unless (api_server_command_line.index{|line| line =~ /--etcd-certfile/} && api_server_command_line.index{|line| line =~ /--etcd-keyfile/})
-      @results[target]['api_server']['CIS 1.1.27 - Ensure that the --etcd-certfile and --etcd-keyfile arguments are set as appropriate'] = "Fail"
+      @results[target]['api_server']['CIS 1.1.26 - Ensure that the --etcd-certfile and --etcd-keyfile arguments are set as appropriate'] = "Fail"
     else
-      @results[target]['api_server']['CIS 1.1.27 - Ensure that the --etcd-certfile and --etcd-keyfile arguments are set as appropriate'] = "Pass"
+      @results[target]['api_server']['CIS 1.1.26 - Ensure that the --etcd-certfile and --etcd-keyfile arguments are set as appropriate'] = "Pass"
     end
 
     unless api_server_command_line.index{|line| line =~ /--admission-control\S*ServiceAccount/}
-      @results[target]['api_server']['CIS 1.1.28 - Ensure that the admission control policy is set to ServiceAccount'] = "Fail"
+      @results[target]['api_server']['CIS 1.1.27 - Ensure that the admission control policy is set to ServiceAccount'] = "Fail"
     else
-      @results[target]['api_server']['CIS 1.1.28 - Ensure that the admission control policy is set to ServiceAccount'] = "Pass"
+      @results[target]['api_server']['CIS 1.1.27 - Ensure that the admission control policy is set to ServiceAccount'] = "Pass"
     end
 
     unless (api_server_command_line.index{|line| line =~ /--tls-cert-file/} && api_server_command_line.index{|line| line =~ /--tls-private-key-file/})
-      @results[target]['api_server']['CIS 1.1.29 - Ensure that the --tls-cert-file and --tls-private-key-file arguments are set as appropriate'] = "Fail"
+      @results[target]['api_server']['CIS 1.1.28 - Ensure that the --tls-cert-file and --tls-private-key-file arguments are set as appropriate'] = "Fail"
     else
-      @results[target]['api_server']['CIS 1.1.29 - Ensure that the --tls-cert-file and --tls-private-key-file arguments are set as appropriate'] = "Pass"
+      @results[target]['api_server']['CIS 1.1.28 - Ensure that the --tls-cert-file and --tls-private-key-file arguments are set as appropriate'] = "Pass"
     end
 
     unless api_server_command_line.index{|line| line =~ /--client-ca-file/}
-      @results[target]['api_server']['CIS 1.1.30 - Ensure that the --client-ca-file argument is set as appropriate'] = "Fail"
+      @results[target]['api_server']['CIS 1.1.29 - Ensure that the --client-ca-file argument is set as appropriate'] = "Fail"
     else
-      @results[target]['api_server']['CIS 1.1.30 - Ensure that the --client-ca-file argument is set as appropriate'] = "Pass"
+      @results[target]['api_server']['CIS 1.1.29 - Ensure that the --client-ca-file argument is set as appropriate'] = "Pass"
     end
 
     unless api_server_command_line.index{|line| line =~ /--etcd-cafile/}
-      @results[target]['api_server']['CIS 1.1.31 - Ensure that the --etcd-cafile argument is set as appropriate'] = "Fail"
+      @results[target]['api_server']['CIS 1.1.30 - Ensure that the --etcd-cafile argument is set as appropriate'] = "Fail"
     else
-      @results[target]['api_server']['CIS 1.1.31 - Ensure that the --etcd-cafile argument is set as appropriate'] = "Pass"
+      @results[target]['api_server']['CIS 1.1.30 - Ensure that the --etcd-cafile argument is set as appropriate'] = "Pass"
     end
 
     unless api_server_command_line.index{|line| line =~ /--authorization-mode\S*Node/}
-      @results[target]['api_server']['CIS 1.1.32 - Ensure that the --authorization-mode argument is set to Node'] = "Fail"
+      @results[target]['api_server']['CIS 1.1.31 - Ensure that the --authorization-mode argument is set to Node'] = "Fail"
     else
-      @results[target]['api_server']['CIS 1.1.32 - Ensure that the --authorization-mode argument is set to Node'] = "Pass"
+      @results[target]['api_server']['CIS 1.1.31 - Ensure that the --authorization-mode argument is set to Node'] = "Pass"
     end
 
     unless api_server_command_line.index{|line| line =~ /--admission-control\S*NodeRestriction/}
-      @results[target]['api_server']['CIS 1.1.33 - Ensure that the admission control policy is set to NodeRestriction'] = "Fail"
+      @results[target]['api_server']['CIS 1.1.32 - Ensure that the admission control policy is set to NodeRestriction'] = "Fail"
     else
-      @results[target]['api_server']['CIS 1.1.33 - Ensure that the admission control policy is set to NodeRestriction'] = "Pass"
+      @results[target]['api_server']['CIS 1.1.32 - Ensure that the admission control policy is set to NodeRestriction'] = "Pass"
     end
 
     unless api_server_command_line.index{|line| line =~ /--experimental-encryption-provider-config/}
-      @results[target]['api_server']['CIS 1.1.34 - Ensure that the --experimental-encryption-provider-config argument is set as appropriate'] = "Fail"
+      @results[target]['api_server']['CIS 1.1.33 - Ensure that the --experimental-encryption-provider-config argument is set as appropriate'] = "Fail"
     else
-      @results[target]['api_server']['CIS 1.1.34 - Ensure that the --experimental-encryption-provider-config argument is set as appropriate'] = "Pass"
+      @results[target]['api_server']['CIS 1.1.33 - Ensure that the --experimental-encryption-provider-config argument is set as appropriate'] = "Pass"
     end
+
+    #1.1.34 can't be checked using this methodology so it's TBD
+
+    unless api_server_command_line.index{|line| line =~ /--admission-control\S*EventRateLimit/}
+      @results[target]['api_server']['CIS 1.1.35 - Ensure that the admission control policy is set to EventRateLimit'] = "Fail"
+    else
+      @results[target]['api_server']['CIS 1.1.35 - Ensure that the admission control policy is set to EventRateLimit'] = "Pass"
+    end
+
+    if api_server_command_line.index{|line| line =~ /--feature-gates=AdvancedAuditing=false/}
+      @results[target]['api_server']['CIS 1.1.36 - Ensure that the AdvancedAuditing argument is not set to false'] = "Fail"
+    else
+      @results[target]['api_server']['CIS 1.1.36 - Ensure that the AdvancedAuditing argument is not set to false'] = "Pass"
+    end
+
+    #1.1.37 This one is dubious for a pass/fail test as the value should be evaluated against the relity of the cluster.
 
     @results[target]['evidence']['API Server'] = api_server_command_line
   end
