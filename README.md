@@ -12,10 +12,6 @@ This approach has some limitations but has the advantage of working from anywher
 
 In addition to that we've got an agent based approach for checks on the nodes, like file permission and kubelet checks.  The agent can get deployed via the Kubernetes API and then complete it's checks and place the results in the pod log which can then be read in by the script and parsed.  This is a bit on the hacky side but avoids the necessity for any form of network communications from the agent to the running script, which could well be complex.
 
-A challenge of this approach is that we can't easily deploy to master nodes if they have NoSchedule set, so unfortunately can't use this approach for things like the Kubeadm masters.
-
-We've started implementing checks on the kubelet processes using this approach, however a bug in 1.6.0-1.6.2 means that hostPID isn't working for those versions, so unless you have 1.6.3 this bit won't do much for now.
-
 One of the challenges with scripting these checks is that there are many different Kubernetes distributions, and each one does things differently, so implementing a generic script that covers them all would be tricky.  We're working off kubeadm as a base, but ideally we'll get it working with as many distributions as possible.
 
 ## Coverage
@@ -25,7 +21,7 @@ One of the challenges with scripting these checks is that there are many differe
  - Section 1.1 - API Server - All bar one Checks Implemented (34)
  - Section 1.2 - Scheduler - All Checks Implemented (1)
  - Section 1.3 - Controller Manager - All Checks Implemented (6)
- - Section 1.4 - Configuration Files - TBC (need separate logic to access filesystems and check permissions on the master node)
+ - Section 1.4 - Configuration Files - Basic Coverage implemented via kaa-agent.
  - Section 1.5 - etcd - All bar one Checks Implemented (8)
  - Section 1.6 - General Security Primitives - Not implementing directly.  These checks are unscored so not really suitable for automated scanning.
 

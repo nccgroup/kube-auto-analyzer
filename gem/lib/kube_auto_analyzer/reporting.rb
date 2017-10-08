@@ -28,10 +28,10 @@ module KubeAutoAnalyzer
       @report_file.puts '* ' + test + ' - **' + result + '**'
     end
     if @options.agent_file_checks
-      @report_file.puts "\n\nWorker Nodes File Permissions"
+      @report_file.puts "\n\Nodes File Permissions"
       @report_file.puts "----------------------\n\n"
-      @log.debug("Class is #{@results[@options.target_server]['worker_files'].class}")
-      @results[@options.target_server]['worker_files'].each do |node, results|
+      @log.debug("Class is #{@results[@options.target_server]['node_files'].class}")
+      @results[@options.target_server]['node_files'].each do |node, results|
         @report_file.puts "\n\n#{node}\n"
         results.each do |file|
          @report_file.puts file.join(', ')
@@ -295,8 +295,8 @@ module KubeAutoAnalyzer
     #Close the Worker Node Div
     @html_report_file.puts '</div>'
     if @options.agent_checks
-      @html_report_file.puts '<br><h2>File Permissions</h2>'
-      @results[@options.target_server]['worker_files'].each do |node, results|
+      @html_report_file.puts '<br><h2>Node File Permissions</h2>'
+      @results[@options.target_server]['node_files'].each do |node, results|
         @html_report_file.puts "<br><b>#{node}</b><br>"
         @html_report_file.puts "<table><thead><tr><th>file</th><th>user</th><th>group</th><th>permissions</th></thead>"
         results.each do |file|

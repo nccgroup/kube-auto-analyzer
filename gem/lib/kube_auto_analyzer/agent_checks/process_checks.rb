@@ -9,9 +9,9 @@ module KubeAutoAnalyzer
 
     nodes = Array.new
     @client.get_nodes.each do |node|
-      unless node.spec.taints.to_s =~ /NoSchedule/
+    #  unless node.spec.taints.to_s =~ /NoSchedule/
         nodes << node
-      end
+    #  end
     end
 
     nodes.each do |nod|
@@ -25,6 +25,11 @@ module KubeAutoAnalyzer
       pod.spec.restartPolicy = "Never"
       pod.spec.containers = {}
       pod.spec.containers = [{name: "kaakubelettest", image: "raesene/kaa-agent:latest"}]
+      
+      #Try the Toleration for Master
+      pod.spec.tolerations = {}
+      pod.spec.tolerations = [{ key:"key", operator:"Equal", value:"value",effect:"NoSchedule"}]
+
       pod.spec.containers[0].args = ["/process-checker.rb"]
       pod.spec.hostPID = true
       pod.spec.nodeselector = {}
