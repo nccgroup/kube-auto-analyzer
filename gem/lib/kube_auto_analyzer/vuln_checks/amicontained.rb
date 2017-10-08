@@ -10,9 +10,7 @@ module KubeAutoAnalyzer
 
     nodes = Array.new
     @client.get_nodes.each do |node|
-      unless node.spec.taints.to_s =~ /NoSchedule/
-        nodes << node
-      end
+      nodes << node
     end
     
     nodes.each do |nod|
@@ -28,6 +26,11 @@ module KubeAutoAnalyzer
       pod.spec.containers = {}
       pod.spec.containers = [{name: "kubeautoanalyzerkubelettest", image: "raesene/kaa-agent:latest"}]
       pod.spec.containers[0].args = ["/amicontained.rb"]
+
+      #Try the Toleration for Master
+      pod.spec.tolerations = {}
+      pod.spec.tolerations = [{ key:"key", operator:"Equal", value:"value",effect:"NoSchedule"}]
+      
       pod.spec.nodeselector = {}
       pod.spec.nodeselector['kubernetes.io/hostname'] = node_hostname
       begin

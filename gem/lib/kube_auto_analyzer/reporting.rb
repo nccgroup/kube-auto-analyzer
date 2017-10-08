@@ -1,54 +1,10 @@
 module KubeAutoAnalyzer
 
-  def self.report
+  def self.json_report
+    require 'json'
     @log.debug("Starting Report")
-    @report_file.puts "Kubernetes Analyzer"
-    @report_file.puts "===================\n\n"
-    @report_file.puts "**Server Reviewed** : #{@options.target_server}"
-    @report_file.puts "\n\nAPI Server Results"
-    @report_file.puts "----------------------\n\n"
-    @results[@options.target_server]['api_server'].each do |test, result|
-      @report_file.puts '* ' + test + ' - **' + result + '**'
-    end
-    @report_file.puts "\n\nScheduler Results"
-    @report_file.puts "----------------------\n\n"
-    @results[@options.target_server]['scheduler'].each do |test, result|
-      @report_file.puts '* ' + test + ' - **' + result + '**'
-    end
+    @json_report_file.puts JSON.generate(@results) 
 
-    @report_file.puts "\n\nController Manager Results"
-    @report_file.puts "----------------------\n\n"
-    @results[@options.target_server]['controller_manager'].each do |test, result|
-      @report_file.puts '* ' + test + ' - **' + result + '**'
-    end
-
-    @report_file.puts "\n\netcd Results"
-    @report_file.puts "----------------------\n\n"
-    @results[@options.target_server]['etcd'].each do |test, result|
-      @report_file.puts '* ' + test + ' - **' + result + '**'
-    end
-    if @options.agent_file_checks
-      @report_file.puts "\n\Nodes File Permissions"
-      @report_file.puts "----------------------\n\n"
-      @log.debug("Class is #{@results[@options.target_server]['node_files'].class}")
-      @results[@options.target_server]['node_files'].each do |node, results|
-        @report_file.puts "\n\n#{node}\n"
-        results.each do |file|
-         @report_file.puts file.join(', ')
-        end
-      end
-    end
-
-    @report_file.puts "\n\nEvidence"
-    @report_file.puts "---------------\n\n"
-    @report_file.puts '    ' + @results[@options.target_server]['evidence']['API Server'].to_s
-    @report_file.puts "---------------\n\n"
-    @report_file.puts '    ' + @results[@options.target_server]['evidence']['Scheduler'].to_s
-    @report_file.puts "---------------\n\n"
-    @report_file.puts '    ' + @results[@options.target_server]['evidence']['Controller Manager'].to_s
-    @report_file.puts "---------------\n\n"
-    @report_file.puts '    ' + @results[@options.target_server]['evidence']['etcd'].to_s
-    @report_file.close
   end
 
   def self.html_report

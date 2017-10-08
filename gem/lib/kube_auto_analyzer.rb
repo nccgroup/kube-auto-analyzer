@@ -33,9 +33,13 @@ module KubeAutoAnalyzer
     @log.debug("Target API Server is " + @options.target_server)
 
     @report_file_name = @base_dir + '/' + @options.report_file
-    #Remove the Text report for now as we're not using this option
-    #@report_file = File.new(@report_file_name + '.txt','w+')
-    @html_report_file = File.new(@report_file_name + '.html','w+')
+    if @options.json_report
+      @json_report_file = File.new(@report_file_name + '.json','w+')
+    end
+
+    if @options.html_report
+      @html_report_file = File.new(@report_file_name + '.html','w+')
+    end
     @log.debug("New Report File created #{@report_file_name}")
         
     @results = Hash.new
@@ -96,7 +100,12 @@ module KubeAutoAnalyzer
       check_kubelet_process
       check_amicontained
     end
-    html_report
+    if @options.html_report
+      html_report
+    end
+    if @options.json_report
+      json_report
+    end
   end
 
 

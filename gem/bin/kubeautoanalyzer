@@ -9,6 +9,7 @@
   options.report_file = 'kube-parse-report'
   options.target_server = 'http://127.0.0.1:8080'
   options.html_report = false
+  options.json_report = false
   options.token = ''
   options.token_file = ''
   options.config_file = false
@@ -31,6 +32,14 @@
 
     opts.on("-t", "--token [TOKEN]", "Bearer Token to Use") do |token|
       options.token = token
+    end
+
+    opts.on("-j", "--json", "Create a JSON report") do |json|
+      options.json_report = true
+    end
+
+    opts.on("--html", "Create an HTML report") do |html|
+      options.html_report = true
     end
 
     opts.on("-f", "--token_file [TOKENFILE]", "Token file to use (provide full path)") do |token_file|
@@ -64,6 +73,12 @@
 
   unless (options.token.length > 1 || options.config_file || options.token_file.length > 1)
     puts "No valid auth mechanism specified"
+    puts opts
+    exit
+  end
+
+  unless (options.json_report || options.html_report)
+    puts "You need to ask for either an HTML report or a JSON one (or both)"
     puts opts
     exit
   end
