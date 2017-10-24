@@ -395,7 +395,7 @@ module KubeAutoAnalyzer
     end
 
     #This isn't quite right as we should really check the dir. but as that's not easily done lets start with an existence check
-    unless etcd_command_line.index{|line| line =~ /--wall-dir/}
+    unless etcd_command_line.index{|line| line =~ /--wal-dir/}
       @results[target]['etcd']['CIS 1.5.7 - Ensure that the --wal-dir argument is set as appropriate'] = "Fail"
     else
       @results[target]['etcd']['CIS 1.5.7 - Ensure that the --wal-dir argument is set as appropriate'] = "Pass"
