@@ -1,10 +1,44 @@
 # Kubernetes Auto Analyzer
 
-This is a configuration analyzer tool intended to automate the process of reviewing Kubernetes installations against the CIS Kubernetes 1.7 Benchmark.
+This is a configuration analyzer tool intended to automate the process of reviewing Kubernetes installations against the CIS Kubernetes 1.8 Benchmark.
 
-It's currently under heavy development so use at your own risk :)
+## Getting Started
 
-## Approach
+There's two ways to run the analyzer either as a ruby gem or using docker.
+
+### Ruby Gem
+
+To install the ruby gem , just do `gem install kube_auto_analyzer` and that should put the kubeautoanalyzer command onto your path (assuming you have a sane ruby setup!)
+
+The best way to use the tool is to provide it a KUBECONFIG file to identify and authenticate the session.  in that event you can run it with
+
+`kubeautoanalyzer -c <kubeconfig_file_name> -r <report_name>`
+
+If you've got an authorisation token for the system (e.g. with many Kubernetes 1.5 or earlier installs) you can run with
+
+`kubeautoanalyzer -s https://<API_SERVER_IP>:<API_SERVER_PORT> -t <TOKEN> -r <report_name>`
+
+Running `kubeautoanalyzer` without any switched will provide information on the command line switches available.
+
+### Docker
+
+Unsurprisingly there's an image on Docker hub.  To run you'll need to put the config file (if you're using one) in a directory that can be accessed by the docker container and then mount it as a volume to /data in the container e.g.
+
+`docker run -v /data:/data raesene/kube_auto_analyzer -c /data/admin.conf -r testdock`
+
+## Agent Checks
+
+The `--agentChecks` switch will deploy a container onto each node in the cluster to try and complete various checks that need to run from the node. Your cluster need to be able to pull from Docker hub for this to work.
+
+This will also slow things down a bit (depending on your network/cluster speed)
+
+## Reporting
+
+There are two reporting modes available, JSON and HTML.  The HTML is intended for humans to read and the JSON for input to other tools.  The HTML report should looks something like this.
+
+![Report Example](https://raw.githubusercontent.com/nccgroup/kube-auto-analyzer/master/report_example.png)
+
+## Technical Background - Approach
 
 There's two parts currently implemented by this tool, both wrapped in a ruby gem.  The first element takes the approach of extracting the command lines used to start the relevant containers (e.g. API Server, Scheduler etc) from the API and check them against the relevant sections of the standard.  This is possible via the API server as the spec. of each container contains the command line executed.  At the moment Kubernetes doesn't have any form of API to query it's launch parameters, so this seems like the best approach.
 
@@ -51,31 +85,11 @@ We're starting to implement checks for common Kubernetes vulnerabilities.  Some 
  - kismatic - Works ok
  - GCE - Doesn't really work at all.  GCE doesn't run the control plane components as pods, so we can't use this approach.
 
-## Usage
-
-First up you'll need to install the gem. `gem install kube_auto_analyzer` should do the job and add the dependencies.
-
-and that should put the kubeautoanalyzer command onto your path (assuming you have a sane ruby setup!)
-
-The best way to use the tool is to provide it a KUBECONFIG file to identify and authenticate the session.  in that event you can run it with
-
-`kubeautoanalyzer -c <kubeconfig_file_name> -r <report_name>`
-
-If you've got an authorisation token for the system (e.g. with many Kubernetes 1.5 or earlier installs) you can run with
-
-`kubeautoanalyzer -s https://<API_SERVER_IP>:<API_SERVER_PORT> -t <TOKEN> -r <report_name>`
 
 The switch for adding agent based checking is `--agentChecks` .  If you run using this it will take quite a lot longer to complete, as it pulls/runs the container some times.
-
-## Usage with Docker
-
-Unsurprisingly there's an image on Docker hub.  To run you'll need to put the config file (if you're using one) in a directory that can be accessed by the docker container and then mount it as a volume to /data in the container e.g.
-
-`docker run -v /data:/data raesene/kube_auto_analyzer -c /data/admin.conf -r testdock --agentChecks`
-
 
 ## TODO
 
  - Add check on authorization modes explicitly
+ - Add RBAC roles so we don't just assume cluster admin for running.
  - Getting to the point where it would be worth some re-factoring to reduce duplication.  specifically abstract common routines like container creation, consistency in variable useetc.
- - Re-implement text reporting.  We have the HTML report for humans, so realistically it might be better to do the other report as something like JSON, which could be used elsewhere.
