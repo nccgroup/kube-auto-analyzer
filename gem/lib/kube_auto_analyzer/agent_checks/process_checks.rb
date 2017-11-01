@@ -120,7 +120,7 @@ module KubeAutoAnalyzer
         end
 
         unless kubelet_proc =~ /--keep-terminated-pod-volumes=false/
-          @results[target]['kubelet_checks'][node_hostname]['CIS 2.1.9 - that the --keep-terminated-pod-volumes argument is set to false'] = "Fail"
+          @results[target]['kubelet_checks'][node_hostname]['CIS 2.1.9 - Ensure that the --keep-terminated-pod-volumes argument is set to false'] = "Fail"
         else
           @results[target]['kubelet_checks'][node_hostname]['CIS 2.1.9 - Ensure that the --keep-terminated-pod-volumes argument is set to false'] = "Pass"
         end

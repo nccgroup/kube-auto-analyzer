@@ -29,7 +29,7 @@ module KubeAutoAnalyzer
           font-size: 48px;
           color: #C41230;
         }
-        .master-node, .worker-node {
+        .master-node, .worker-node, .vuln-node {
           background: #F5F5F5;
           border: 1px solid black;
           padding-left: 6px;
@@ -80,6 +80,13 @@ module KubeAutoAnalyzer
     @html_report_file.puts '<img width="100" height="100" align="right"' + " src=#{logo} />"
     @html_report_file.puts "<h1>Kubernetes Auto Analyzer</h1>"
     @html_report_file.puts "<br><b>Server Reviewed : </b> #{@options.target_server}"
+    #Starting Vuln Check Node
+    @html_report_file.puts '<br><br><div class="vuln-node"><h2>Key Vulnerability Test Results</h2><br>'
+
+
+    #Endind Vuln check Node
+    @html_report_file.puts '</div>'
+
     @html_report_file.puts '<br><br><div class="master-node"><h2>Master Node Results</h2><br>'
     #Charting setup counts for the passes and fails
     api_server_pass = 0

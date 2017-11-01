@@ -92,4 +92,6 @@ The switch for adding agent based checking is `--agentChecks` .  If you run usin
 
  - Add check on authorization modes explicitly
  - Add RBAC roles so we don't just assume cluster admin for running.
- - Getting to the point where it would be worth some re-factoring to reduce duplication.  specifically abstract common routines like container creation, consistency in variable useetc.
+ - Getting to the point where it would be worth some re-factoring to reduce duplication.  specifically abstract common routines like container creation, consistency in variable use etc.
+ - Updated visuals to do a red/green for the vuln checks
+ - 
