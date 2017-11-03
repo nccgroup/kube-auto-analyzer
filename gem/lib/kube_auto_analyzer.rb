@@ -51,7 +51,7 @@ module KubeAutoAnalyzer
         auth_options = { bearer_token: @options.token}
       elsif @options.token_file.length > 1
         auth_options = { bearer_token_file: @options.token_file}
-      else
+      elsif @options.insecure 
         #Not sure this will actually work for no auth. needed, try and ooold cluster to check
         auth_options = {}
       end

@@ -12,11 +12,15 @@ To install the ruby gem , just do `gem install kube_auto_analyzer` and that shou
 
 The best way to use the tool is to provide it a KUBECONFIG file to identify and authenticate the session.  in that event you can run it with
 
-`kubeautoanalyzer -c <kubeconfig_file_name> -r <report_name>`
+`kubeautoanalyzer -c <kubeconfig_file_name> -r <report_name> --html`
 
 If you've got an authorisation token for the system (e.g. with many Kubernetes 1.5 or earlier installs) you can run with
 
-`kubeautoanalyzer -s https://<API_SERVER_IP>:<API_SERVER_PORT> -t <TOKEN> -r <report_name>`
+`kubeautoanalyzer -s https://<API_SERVER_IP>:<API_SERVER_PORT> -t <TOKEN> -r <report_name> --html`
+
+If you've got access to the insecure API port and would like to run against that, you can run with
+
+`kubeautoanalyzer -s http://<API_SERVER_IP>:<INSECURE_PORT> -i -r <report_name> --html`
 
 Running `kubeautoanalyzer` without any switched will provide information on the command line switches available.
 

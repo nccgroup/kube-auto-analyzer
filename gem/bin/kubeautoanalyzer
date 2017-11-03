@@ -14,6 +14,7 @@
   options.token_file = ''
   options.config_file = false
   options.agent_checks = false
+  options.insecure = false
   
 
   opts = OptionParser.new do |opts|
@@ -28,6 +29,10 @@
 
     opts.on("-s", "--server [SERVER]", "Target Server") do |serv|
       options.target_server = serv
+    end
+
+    opts.on("-i", "--insecure", "Use the Insecure API Server Port") do |insecure|
+      options.insecure = true
     end
 
     opts.on("-t", "--token [TOKEN]", "Bearer Token to Use") do |token|
@@ -71,7 +76,7 @@
 
   opts.parse!(ARGV)
 
-  unless (options.token.length > 1 || options.config_file || options.token_file.length > 1)
+  unless (options.token.length > 1 || options.config_file || options.token_file.length > 1 || options.insecure )
     puts "No valid auth mechanism specified"
     puts opts
     exit
