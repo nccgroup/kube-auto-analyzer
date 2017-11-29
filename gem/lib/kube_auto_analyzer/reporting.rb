@@ -189,6 +189,71 @@ module KubeAutoAnalyzer
     end
     @html_report_file.puts "</table>"
 
+    #Show what cluster authentication modes are supported.
+    @html_report_file.puts "<br><br>"
+    @html_report_file.puts "<br><br><h2>Kubernetes Authentication Options</h2>"
+    @html_report_file.puts "<table><thead><tr><th>Authentication Option</th><th>Enabled?</th></tr></thead>"
+    if @results[@options.target_server]['api_server']['CIS 1.1.2 - Ensure that the --basic-auth-file argument is not set'] == "Fail"
+      @html_report_file.puts "<tr><td>Basic Authentication</td><td>Enabled</td></tr>"
+    else
+      @html_report_file.puts "<tr><td>Basic Authentication</td><td>Disabled</td></tr>"
+    end
+    if @results[@options.target_server]['api_server']['CIS 1.1.20 - Ensure that the --token-auth-file argument is not set'] == "Fail"
+      @html_report_file.puts "<tr><td>Token Authentication</td><td>Enabled</td></tr>"
+    else
+      @html_report_file.puts "<tr><td>Token Authentication</td><td>Disabled</td></tr>"
+    end
+    if @results[@options.target_server]['api_server']['CIS 1.1.29 - Ensure that the --client-ca-file argument is set as appropriate'] == "Pass"
+      @html_report_file.puts "<tr><td>Client Certificate Authentication</td><td>Enabled</td></tr>"
+    else
+      @html_report_file.puts "<tr><td>Client Certificate Authentication</td><td>Disabled</td></tr>"
+    end
+
+    if @results[@options.target_server]['evidence']['API Server'].index{|line| line =~ /--oidc-issuer-url/}
+      @html_report_file.puts "<tr><td>OpenID Connect Authentication</td><td>Enabled</td></tr>"
+    else
+      @html_report_file.puts "<tr><td>OpenID Connect Authentication</td><td>Disabled</td></tr>"
+    end
+
+    if @results[@options.target_server]['evidence']['API Server'].index{|line| line =~ /--authentication-token-webhook-config-file/}
+      @html_report_file.puts "<tr><td>Webhook Authentication</td><td>Enabled</td></tr>"
+    else
+      @html_report_file.puts "<tr><td>Webhook Authentication</td><td>Disabled</td></tr>"
+    end
+
+    if @results[@options.target_server]['evidence']['API Server'].index{|line| line =~ /--requestheader-username-headers/}
+      @html_report_file.puts "<tr><td>Proxy Authentication</td><td>Enabled</td></tr>"
+    else
+      @html_report_file.puts "<tr><td>Proxy Authentication</td><td>Disabled</td></tr>"
+    end
+
+    @html_report_file.puts "</table>"
+
+    #Show what cluster authorization modes are supported.
+    @html_report_file.puts "<br><br>"
+    @html_report_file.puts "<br><br><h2>Kubernetes Authorization Options</h2>"
+    @html_report_file.puts "<table><thead><tr><th>Authorization Option</th><th>Enabled?</th></tr></thead>"
+
+    if @results[@options.target_server]['evidence']['API Server'].index{|line| line =~ /--authorization-mode\S*RBAC/}
+      @html_report_file.puts "<tr><td>Role Based Authorization</td><td>Enabled</td></tr>"
+    else
+      @html_report_file.puts "<tr><td>Role Based Authorization</td><td>Disabled</td></tr>"
+    end
+
+    if @results[@options.target_server]['evidence']['API Server'].index{|line| line =~ /--authorization-mode\S*ABAC/}
+      @html_report_file.puts "<tr><td>Attribute Based Authorization</td><td>Enabled</td></tr>"
+    else
+      @html_report_file.puts "<tr><td>Attribute Based Authorization</td><td>Disabled</td></tr>"
+    end
+
+    if @results[@options.target_server]['evidence']['API Server'].index{|line| line =~ /--authorization-mode\S*Webhook/}
+      @html_report_file.puts "<tr><td>Webhook Authorization</td><td>Enabled</td></tr>"
+    else
+      @html_report_file.puts "<tr><td>Webhook Authorization</td><td>Disabled</td></tr>"
+    end
+
+    @html_report_file.puts "</table>"    
+
     @html_report_file.puts "<br><br><h2>Evidence</h2><br>"
     @html_report_file.puts "<table><thead><tr><th>Area</th><th>Output</th></tr></thead>"
     @results[@options.target_server]['evidence'].each do |area, output|
