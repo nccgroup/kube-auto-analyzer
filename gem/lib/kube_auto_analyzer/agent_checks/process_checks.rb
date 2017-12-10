@@ -28,8 +28,9 @@ module KubeAutoAnalyzer
       
       #Try the Toleration for Master
       pod.spec.tolerations = {}
-      pod.spec.tolerations = [{ key:"key", operator:"Equal", value:"value",effect:"NoSchedule"}]
-
+      #pod.spec.tolerations = [{ key:"key", operator:"Equal", value:"value",effect:"NoSchedule"}]
+      pod.spec.tolerations = [{ operator:"Exists" }]
+      
       pod.spec.containers[0].args = ["/process-checker.rb"]
       pod.spec.hostPID = true
       pod.spec.nodeselector = {}

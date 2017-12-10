@@ -29,7 +29,8 @@ module KubeAutoAnalyzer
 
       #Try the Toleration for Master
       pod.spec.tolerations = {}
-      pod.spec.tolerations = [{ key:"key", operator:"Equal", value:"value",effect:"NoSchedule"}]
+      #pod.spec.tolerations = [{ key:"key", operator:"Equal", value:"value",effect:"NoSchedule"}]
+      pod.spec.tolerations = [{ operator:"Exists" }]
       
       pod.spec.nodeselector = {}
       pod.spec.nodeselector['kubernetes.io/hostname'] = node_hostname

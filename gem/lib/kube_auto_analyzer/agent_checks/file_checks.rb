@@ -25,7 +25,9 @@ module KubeAutoAnalyzer
 
       #Try the Toleration for Master
       pod.spec.tolerations = {}
-      pod.spec.tolerations = [{ key:"key", operator:"Equal", value:"value",effect:"NoSchedule"}]
+      #Old version doesn't work with 1.8
+      #pod.spec.tolerations = [{ key:"key", operator:"Equal", value:"value",effect:"NoSchedule"}]
+      pod.spec.tolerations = [{ operator:"Exists" }]
       
       pod.spec.volumes = [{name: 'etck8s', hostPath: {path: '/etc'}}]
       pod.spec.containers[0].volumeMounts = [{mountPath: '/etc', name: 'etck8s'}]
