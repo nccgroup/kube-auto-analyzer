@@ -26,12 +26,15 @@ else
 end
 
 #AppArmor Profile Detection
-apparmor = File.open('/proc/self/attr/current').read
-
-if apparmor.length > 1
-  results['apparmor'] = apparmor
-else
-  results['apparmor'] = "none"
+begin
+  apparmor = File.open('/proc/self/attr/current').read
+  if apparmor.length > 1
+    results['apparmor'] = apparmor
+  else
+    results['apparmor'] = "none"
+  end
+rescue Errno::EINVAL
+  results['apparmor'] = "Error"
 end
 
 
