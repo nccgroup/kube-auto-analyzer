@@ -18,6 +18,8 @@ module KubeAutoAnalyzer
           pods_resp = RestClient::Request.execute(:url => "https://#{nod}:10250/runningpods",:method => :get, :verify_ssl => false)
         rescue RestClient::Forbidden
           pods_resp = "Not Vulnerable - Request Forbidden"
+        rescue RestClient::Unauthorized
+          pods_resp = "Not Vulnerable - Request Unauthorized"
         end
         @results[target]['vulns']['unauth_kubelet'][nod] = pods_resp
       else
