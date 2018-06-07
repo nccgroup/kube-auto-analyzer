@@ -52,8 +52,11 @@ module KubeAutoAnalyzer
       @log.debug("About to start API Server check pod")
       @client.create_pod(pod)
       @log.debug("Executed the create pod")
+      sleep_count = 0
       begin
         sleep(5) until @client.get_pod(container_name,"default")['status']['containerStatuses'][0]['state']['terminated']['reason'] == "Completed"
+        sleep_count = sleep_count + 1
+        @log.debug("Waited #{(5 * sleep_count).to_s} seconds for the API Server Check Pod")
       rescue
         retry
       end

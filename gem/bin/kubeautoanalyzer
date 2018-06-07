@@ -15,6 +15,7 @@
   options.config_file = false
   options.agent_checks = false
   options.insecure = false
+  options.context = false
   
 
   opts = OptionParser.new do |opts|
@@ -25,6 +26,10 @@
     #TODO: Need options for different authentication mechanisms      
     opts.on("-c", "--config [CONFIG]", "kubeconfig file to load") do |file|
       options.config_file = file
+    end
+
+    opts.on("--context [CONTEXT]", "context to use from kubeconfig") do |context|
+      options.context = context
     end
 
     opts.on("-s", "--server [SERVER]", "Target Server") do |serv|

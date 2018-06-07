@@ -14,6 +14,10 @@ The best way to use the tool is to provide it a KUBECONFIG file to identify and 
 
 `kubeautoanalyzer -c <kubeconfig_file_name> -r <report_name> --html`
 
+If there are multiple contexts in your Kubeconfig file and you don't want to use the one specified as "current-context" then you can specify one on the commmand line with
+
+`kubeautoanalyzer -c <kubeconfig_file_name> --context=<context_name> -r <report_name> --html`
+
 If you've got an authorisation token for the system (e.g. with many Kubernetes 1.5 or earlier installs) you can run with
 
 `kubeautoanalyzer -s https://<API_SERVER_IP>:<API_SERVER_PORT> -t <TOKEN> -r <report_name> --html`

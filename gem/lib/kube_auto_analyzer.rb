@@ -60,22 +60,27 @@ module KubeAutoAnalyzer
     else
       begin
         config = Kubeclient::Config.read(@options.config_file)
+        if @options.context
+          context = config.context(@options.context)
+        else
+          context = config.context
+        end
       rescue Errno::ENOENT
         puts "Config File could not be read, check the path?"
         exit
       end
       @client = Kubeclient::Client.new(
-        config.context.api_endpoint,
-        config.context.api_version,
+        context.api_endpoint,
+        context.api_version,
         {
-          ssl_options: config.context.ssl_options,
-          auth_options: config.context.auth_options
+          ssl_options: context.ssl_options,
+          auth_options: context.auth_options
         }
       )
       #We didn't specify the target on the command line so lets get it from the config file
-      @options.target_server = config.context.api_endpoint
+      @options.target_server = context.api_endpoint
       @log.debug("target is " + @options.target_server)
-      @results[config.context.api_endpoint] = Hash.new
+      @results[context.api_endpoint] = Hash.new
     end
     #Test response
     begin
