@@ -6,9 +6,31 @@ This is a configuration analyzer tool intended to automate the process of review
 
 There's two ways to run the analyzer either as a ruby gem or using docker.
 
+### Docker
+
+Unsurprisingly there's an image on Docker hub.  To run you'll need to put the config file (if you're using one) in a directory that can be accessed by the docker container and then mount it as a volume to /data in the container e.g.
+
+`docker run -v /data:/data raesene/kube_auto_analyzer -c /data/admin.conf -r testdock`
+
 ### Ruby Gem
 
+#### Pre-requisites
+
+For the gem install you'll need some development libs to get it working. In general a ruby version of 2.1+ and the ruby-dev and build-essential packages should work on debian based distributions.  For Amazon Linux this set of commands should work
+
+```
+sudo yum groupinstall "Development Tools"
+sudo yum install ruby24 ruby24-devel
+sudo alternatives --set ruby /usr/bin/ruby2.4
+gem install kube_auto_analyzer
+```
+
+#### Gem Install
+
 To install the ruby gem , just do `gem install kube_auto_analyzer` and that should put the kubeautoanalyzer command onto your path (assuming you have a sane ruby setup!)
+
+
+#### Operation
 
 The best way to use the tool is to provide it a KUBECONFIG file to identify and authenticate the session.  in that event you can run it with
 
@@ -27,12 +49,6 @@ If you've got access to the insecure API port and would like to run against that
 `kubeautoanalyzer -s http://<API_SERVER_IP>:<INSECURE_PORT> -i -r <report_name> --html`
 
 Running `kubeautoanalyzer` without any switched will provide information on the command line switches available.
-
-### Docker
-
-Unsurprisingly there's an image on Docker hub.  To run you'll need to put the config file (if you're using one) in a directory that can be accessed by the docker container and then mount it as a volume to /data in the container e.g.
-
-`docker run -v /data:/data raesene/kube_auto_analyzer -c /data/admin.conf -r testdock`
 
 ## Agent Checks
 
