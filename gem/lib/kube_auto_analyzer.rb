@@ -69,14 +69,25 @@ module KubeAutoAnalyzer
         puts "Config File could not be read, check the path?"
         exit
       end
-      @client = Kubeclient::Client.new(
-        context.api_endpoint,
-        context.api_version,
-        {
-          ssl_options: context.ssl_options,
-          auth_options: context.auth_options
-        }
-      )
+      if @options.nosslverify
+        @client = Kubeclient::Client.new(
+          context.api_endpoint,
+          context.api_version,
+          {
+            ssl_options: {client_cert: context.ssl_options[:client_cert], client_key: context.ssl_options[:client_key],verify_ssl: OpenSSL::SSL::VERIFY_NONE},
+            auth_options: context.auth_options
+          }
+        )
+      else
+        @client = Kubeclient::Client.new(
+          context.api_endpoint,
+          context.api_version,
+          {
+            ssl_options: context.ssl_options,
+            auth_options: context.auth_options
+          }
+        )
+      end
       #We didn't specify the target on the command line so lets get it from the config file
       @options.target_server = context.api_endpoint
       @log.debug("target is " + @options.target_server)
@@ -85,7 +96,8 @@ module KubeAutoAnalyzer
     #Test response
     begin
       @client.get_pods.to_s
-    rescue
+    rescue => error
+      puts error
       puts "Check of API connection failed."
       puts "try using kubectl with the same connection details"
       puts "to see what's going wrong."

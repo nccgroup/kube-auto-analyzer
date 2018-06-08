@@ -16,7 +16,7 @@
   options.agent_checks = false
   options.insecure = false
   options.context = false
-  
+  options.nosslverify = false
 
   opts = OptionParser.new do |opts|
     opts.banner = "Kubernetes Auto Analyzer #{KubeAutoAnalyzer::VERSION}"
@@ -30,6 +30,10 @@
 
     opts.on("--context [CONTEXT]", "context to use from kubeconfig") do |context|
       options.context = context
+    end
+
+    opts.on("--nosslverify [NOVERIFY]", "disable SSL verification") do |noverify|
+      options.nosslverify = true
     end
 
     opts.on("-s", "--server [SERVER]", "Target Server") do |serv|
