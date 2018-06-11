@@ -331,7 +331,7 @@ module KubeAutoAnalyzer
     @html_report_file.puts '<br><h3>External Unauthenticated Access to the Kubelet</h3>'
     @html_report_file.puts "<table><thead><tr><th>Node IP Address</th><th>Result</th></thead>"
     @results[@options.target_server]['vulns']['unauth_kubelet'].each do |node, result|
-      unless (result =~ /Forbidden/ || result =~ /Not Open/)
+      unless (result =~ /Forbidden/ || result =~ /Not Open/ || result =~ /Unauthorized/)
         output = "Vulnerable"
       else
         output = result
