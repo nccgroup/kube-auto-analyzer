@@ -266,11 +266,17 @@ module KubeAutoAnalyzer
       @html_report_file.puts "<br><br>"
       @html_report_file.puts "<br><br><h2>Cluster Config Information</h2>"
       @html_report_file.puts "<table><thead><tr><th>Docker Images In Use</th></tr></thead>"
-      @results[@options.target_server]['config']['docker_images'].each do |image|
+      @results[@options.target_server][:config][:docker_images].each do |image|
         @html_report_file.puts "<tr><td>#{image}</td></tr>"
       end
       @html_report_file.puts "</table>"
-      @html_report_file.puts "<br><br>"    
+      @html_report_file.puts "<br><br>"
+      @html_report_file.puts "<table><thead><tr><th>Pod Name</th><th>Namespace</th><th>Service Account</th><th>Host IP</th><th>Pod IP</th></tr></thead>"
+      @results[@options.target_server][:config][:pod_info].each do |pod|
+        @html_report_file.puts "<tr><td>#{pod[:name]}</td><td>#{pod[:namespace]}</td><td>#{pod[:service_account]}</td><td>#{pod[:host_ip]}</td><td>#{pod[:pod_ip]}</td></tr>"
+      end
+      @html_report_file.puts "</table>"
+      @html_report_file.puts "<br><br>"
     end
 
 
