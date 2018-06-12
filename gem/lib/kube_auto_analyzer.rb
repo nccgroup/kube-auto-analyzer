@@ -2,6 +2,7 @@ module KubeAutoAnalyzer
   attr_accessor :execute
   require "kube_auto_analyzer/version"
   require "kube_auto_analyzer/api_checks/master_node"
+  require "kube_auto_analyzer/api_checks/config_dumper"
   require "kube_auto_analyzer/reporting"
   require "kube_auto_analyzer/agent_checks/file_checks"
   require "kube_auto_analyzer/agent_checks/process_checks"
@@ -116,6 +117,9 @@ module KubeAutoAnalyzer
       check_files
       check_kubelet_process
       check_amicontained
+    end
+    if @options.dump_config
+      dump_config
     end
     if @options.html_report
       html_report

@@ -259,6 +259,19 @@ module KubeAutoAnalyzer
     @results[@options.target_server]['evidence'].each do |area, output|
       @html_report_file.puts "<tr><td>#{area}</td><td>#{output}</td></tr>"
     end
+
+    #Only show this section if we were asked to dump the config
+    if @options.dump_config
+      @html_report_file.puts "<br><br>"
+      @html_report_file.puts "<br><br><h2>Cluster Config Information</h2>"
+      @html_report_file.puts "<table><thead><tr><th>Docker Images In Use</th></tr></thead>"
+      @results[@options.target_server]['config']['docker_images'].each do |image|
+        @html_report_file.puts "<tr><td>#{image}</td></tr>"
+      end
+      @html_report_file.puts "</table>"    
+    end
+
+
     #Close the master Node Div
     @html_report_file.puts "</table></div>"
     if @options.agent_checks

@@ -17,6 +17,7 @@
   options.insecure = false
   options.context = false
   options.nosslverify = false
+  options.dump_config = false
 
   opts = OptionParser.new do |opts|
     opts.banner = "Kubernetes Auto Analyzer #{KubeAutoAnalyzer::VERSION}"
@@ -26,6 +27,10 @@
     #TODO: Need options for different authentication mechanisms      
     opts.on("-c", "--config [CONFIG]", "kubeconfig file to load") do |file|
       options.config_file = file
+    end
+
+    opts.on("-d", "--dump [DUMP]", "Dump cluster config into report") do |dump|
+      options.dump_config = true
     end
 
     opts.on("--context [CONTEXT]", "context to use from kubeconfig") do |context|
