@@ -259,6 +259,7 @@ module KubeAutoAnalyzer
     @results[@options.target_server]['evidence'].each do |area, output|
       @html_report_file.puts "<tr><td>#{area}</td><td>#{output}</td></tr>"
     end
+    @html_report_file.puts "</table>"  
 
     #Only show this section if we were asked to dump the config
     if @options.dump_config
@@ -268,7 +269,8 @@ module KubeAutoAnalyzer
       @results[@options.target_server]['config']['docker_images'].each do |image|
         @html_report_file.puts "<tr><td>#{image}</td></tr>"
       end
-      @html_report_file.puts "</table>"    
+      @html_report_file.puts "</table>"
+      @html_report_file.puts "<br><br>"    
     end
 
 
