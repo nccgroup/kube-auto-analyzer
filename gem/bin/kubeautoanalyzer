@@ -18,6 +18,7 @@
   options.context = false
   options.nosslverify = false
   options.dump_config = false
+  options.audit_rbac = false
 
   opts = OptionParser.new do |opts|
     opts.banner = "Kubernetes Auto Analyzer #{KubeAutoAnalyzer::VERSION}"
@@ -35,6 +36,10 @@
 
     opts.on("--context [CONTEXT]", "context to use from kubeconfig") do |context|
       options.context = context
+    end
+
+    opts.on("--rbac", "Audit RBAC") do |rbac|
+      options.audit_rbac = true
     end
 
     opts.on("--nosslverify [NOVERIFY]", "disable SSL verification") do |noverify|

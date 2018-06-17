@@ -3,6 +3,7 @@ module KubeAutoAnalyzer
   require "kube_auto_analyzer/version"
   require "kube_auto_analyzer/api_checks/master_node"
   require "kube_auto_analyzer/api_checks/config_dumper"
+  require "kube_auto_analyzer/api_checks/rbac_auditor"
   require "kube_auto_analyzer/reporting"
   require "kube_auto_analyzer/agent_checks/file_checks"
   require "kube_auto_analyzer/agent_checks/process_checks"
@@ -58,6 +59,7 @@ module KubeAutoAnalyzer
       end
       @results[@options.target_server] = Hash.new
       @client = Kubeclient::Client.new @options.target_server, 'v1', auth_options: auth_options, ssl_options: ssl_options
+      @rbac_client = Kubeclient::Client.new @options.target_server + '/apis/rbac.authorization.k8s.io', 'v1', auth_options: auth_options, ssl_options: ssl_options
     else
       begin
         config = Kubeclient::Config.read(@options.config_file)
@@ -79,9 +81,25 @@ module KubeAutoAnalyzer
             auth_options: context.auth_options
           }
         )
+        @rbac_client = Kubeclient::Client.new(
+          context.api_endpoint + '/apis/rbac.authorization.k8s.io',
+          context.api_version,
+          {
+            ssl_options: {client_cert: context.ssl_options[:client_cert], client_key: context.ssl_options[:client_key],verify_ssl: OpenSSL::SSL::VERIFY_NONE},
+            auth_options: context.auth_options
+          }
+        )
       else
         @client = Kubeclient::Client.new(
           context.api_endpoint,
+          context.api_version,
+          {
+            ssl_options: context.ssl_options,
+            auth_options: context.auth_options
+          }
+        )
+        @rbac_client = Kubeclient::Client.new(
+          context.api_endpoint + '/apis/rbac.authorization.k8s.io',
           context.api_version,
           {
             ssl_options: context.ssl_options,
@@ -120,6 +138,9 @@ module KubeAutoAnalyzer
     end
     if @options.dump_config
       dump_config
+    end
+    if @options.audit_rbac
+      audit_rbac
     end
     if @options.html_report
       html_report
