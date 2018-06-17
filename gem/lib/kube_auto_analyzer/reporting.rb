@@ -279,6 +279,35 @@ module KubeAutoAnalyzer
       @html_report_file.puts "<br><br>"
     end
 
+    #Only show this section if we were asked to dump RBAC
+    if @options.audit_rbac
+      @html_report_file.puts "<br><br>"
+      @html_report_file.puts "<br><br><h2>Cluster Role Information</h2>"
+      @html_report_file.puts "<table><thead><tr><th>Name</th><th>Default?</th><th>Subjects</th><th>Rules</th></tr></thead>"
+      @results[@options.target_server][:rbac][:cluster_roles].each do |name, info|
+        subjects = ''
+        info[:subjects].each do |subject|
+          subjects << "#{subject[:kind]}:#{subject[:namespace]}:#{subject[:name]}<br>"
+        end
+        rules = ''
+        info[:rules].each do |rule|
+          unless rule.verbs
+            rule.verbs = Array.new
+          end
+          unless rule.apiGroups
+            rule.apiGroups = Array.new
+          end
+          unless rule.resources
+            rule.resources = Array.new
+          end
+          rules << "Verbs : #{rule.verbs.join(', ')}<br>API Groups : #{rule.apiGroups.join(', ')}<br>Resources : #{rule.resources.join(', ')}<br><hr>"
+        end
+        @html_report_file.puts "<tr><td>#{name}</td><td>#{info[:default]}</td><td>#{subjects}</td><td>#{rules}</td></tr>"
+      end
+      @html_report_file.puts "</table>"
+      @html_report_file.puts "<br><br>"
+    end
+
 
     #Close the master Node Div
     @html_report_file.puts "</table></div>"
