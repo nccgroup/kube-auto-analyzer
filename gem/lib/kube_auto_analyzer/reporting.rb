@@ -188,129 +188,10 @@ module KubeAutoAnalyzer
       @html_report_file.puts "<tr><td>#{test}</td><td>#{result}</td></tr>"
     end
     @html_report_file.puts "</table>"
-
-    #Show what cluster authentication modes are supported.
-    @html_report_file.puts "<br><br>"
-    @html_report_file.puts "<br><br><h2>Kubernetes Authentication Options</h2>"
-    @html_report_file.puts "<table><thead><tr><th>Authentication Option</th><th>Enabled?</th></tr></thead>"
-    if @results[@options.target_server]['api_server']['CIS 1.1.2 - Ensure that the --basic-auth-file argument is not set'] == "Fail"
-      @html_report_file.puts "<tr><td>Basic Authentication</td><td>Enabled</td></tr>"
-    else
-      @html_report_file.puts "<tr><td>Basic Authentication</td><td>Disabled</td></tr>"
-    end
-    if @results[@options.target_server]['api_server']['CIS 1.1.20 - Ensure that the --token-auth-file argument is not set'] == "Fail"
-      @html_report_file.puts "<tr><td>Token Authentication</td><td>Enabled</td></tr>"
-    else
-      @html_report_file.puts "<tr><td>Token Authentication</td><td>Disabled</td></tr>"
-    end
-    if @results[@options.target_server]['api_server']['CIS 1.1.29 - Ensure that the --client-ca-file argument is set as appropriate'] == "Pass"
-      @html_report_file.puts "<tr><td>Client Certificate Authentication</td><td>Enabled</td></tr>"
-    else
-      @html_report_file.puts "<tr><td>Client Certificate Authentication</td><td>Disabled</td></tr>"
-    end
-
-    if @results[@options.target_server]['evidence']['API Server'].index{|line| line =~ /--oidc-issuer-url/}
-      @html_report_file.puts "<tr><td>OpenID Connect Authentication</td><td>Enabled</td></tr>"
-    else
-      @html_report_file.puts "<tr><td>OpenID Connect Authentication</td><td>Disabled</td></tr>"
-    end
-
-    if @results[@options.target_server]['evidence']['API Server'].index{|line| line =~ /--authentication-token-webhook-config-file/}
-      @html_report_file.puts "<tr><td>Webhook Authentication</td><td>Enabled</td></tr>"
-    else
-      @html_report_file.puts "<tr><td>Webhook Authentication</td><td>Disabled</td></tr>"
-    end
-
-    if @results[@options.target_server]['evidence']['API Server'].index{|line| line =~ /--requestheader-username-headers/}
-      @html_report_file.puts "<tr><td>Proxy Authentication</td><td>Enabled</td></tr>"
-    else
-      @html_report_file.puts "<tr><td>Proxy Authentication</td><td>Disabled</td></tr>"
-    end
-
-    @html_report_file.puts "</table>"
-
-    #Show what cluster authorization modes are supported.
-    @html_report_file.puts "<br><br>"
-    @html_report_file.puts "<br><br><h2>Kubernetes Authorization Options</h2>"
-    @html_report_file.puts "<table><thead><tr><th>Authorization Option</th><th>Enabled?</th></tr></thead>"
-
-    if @results[@options.target_server]['evidence']['API Server'].index{|line| line =~ /--authorization-mode\S*RBAC/}
-      @html_report_file.puts "<tr><td>Role Based Authorization</td><td>Enabled</td></tr>"
-    else
-      @html_report_file.puts "<tr><td>Role Based Authorization</td><td>Disabled</td></tr>"
-    end
-
-    if @results[@options.target_server]['evidence']['API Server'].index{|line| line =~ /--authorization-mode\S*ABAC/}
-      @html_report_file.puts "<tr><td>Attribute Based Authorization</td><td>Enabled</td></tr>"
-    else
-      @html_report_file.puts "<tr><td>Attribute Based Authorization</td><td>Disabled</td></tr>"
-    end
-
-    if @results[@options.target_server]['evidence']['API Server'].index{|line| line =~ /--authorization-mode\S*Webhook/}
-      @html_report_file.puts "<tr><td>Webhook Authorization</td><td>Enabled</td></tr>"
-    else
-      @html_report_file.puts "<tr><td>Webhook Authorization</td><td>Disabled</td></tr>"
-    end
-
-    @html_report_file.puts "</table>"    
-
-    @html_report_file.puts "<br><br><h2>Evidence</h2><br>"
-    @html_report_file.puts "<table><thead><tr><th>Area</th><th>Output</th></tr></thead>"
-    @results[@options.target_server]['evidence'].each do |area, output|
-      @html_report_file.puts "<tr><td>#{area}</td><td>#{output}</td></tr>"
-    end
-    @html_report_file.puts "</table>"  
-
-    #Only show this section if we were asked to dump the config
-    if @options.dump_config
-      @html_report_file.puts "<br><br>"
-      @html_report_file.puts "<br><br><h2>Cluster Config Information</h2>"
-      @html_report_file.puts "<table><thead><tr><th>Docker Images In Use</th></tr></thead>"
-      @results[@options.target_server][:config][:docker_images].each do |image|
-        @html_report_file.puts "<tr><td>#{image}</td></tr>"
-      end
-      @html_report_file.puts "</table>"
-      @html_report_file.puts "<br><br>"
-      @html_report_file.puts "<table><thead><tr><th>Pod Name</th><th>Namespace</th><th>Service Account</th><th>Host IP</th><th>Pod IP</th></tr></thead>"
-      @results[@options.target_server][:config][:pod_info].each do |pod|
-        @html_report_file.puts "<tr><td>#{pod[:name]}</td><td>#{pod[:namespace]}</td><td>#{pod[:service_account]}</td><td>#{pod[:host_ip]}</td><td>#{pod[:pod_ip]}</td></tr>"
-      end
-      @html_report_file.puts "</table>"
-      @html_report_file.puts "<br><br>"
-    end
-
-    #Only show this section if we were asked to dump RBAC
-    if @options.audit_rbac
-      @html_report_file.puts "<br><br>"
-      @html_report_file.puts "<br><br><h2>Cluster Role Information</h2>"
-      @html_report_file.puts "<table><thead><tr><th>Name</th><th>Default?</th><th>Subjects</th><th>Rules</th></tr></thead>"
-      @results[@options.target_server][:rbac][:cluster_roles].each do |name, info|
-        subjects = ''
-        info[:subjects].each do |subject|
-          subjects << "#{subject[:kind]}:#{subject[:namespace]}:#{subject[:name]}<br>"
-        end
-        rules = ''
-        info[:rules].each do |rule|
-          unless rule.verbs
-            rule.verbs = Array.new
-          end
-          unless rule.apiGroups
-            rule.apiGroups = Array.new
-          end
-          unless rule.resources
-            rule.resources = Array.new
-          end
-          rules << "Verbs : #{rule.verbs.join(', ')}<br>API Groups : #{rule.apiGroups.join(', ')}<br>Resources : #{rule.resources.join(', ')}<br><hr>"
-        end
-        @html_report_file.puts "<tr><td>#{name}</td><td>#{info[:default]}</td><td>#{subjects}</td><td>#{rules}</td></tr>"
-      end
-      @html_report_file.puts "</table>"
-      @html_report_file.puts "<br><br>"
-    end
-
-
     #Close the master Node Div
     @html_report_file.puts "</table></div>"
+
+
     if @options.agent_checks
       @html_report_file.puts '<br><br><div class="worker-node"><h2>Worker Node Results</h2>'
 
@@ -493,6 +374,132 @@ module KubeAutoAnalyzer
 
     @html_report_file.puts "</table>"
 
+    #Show what cluster authentication modes are supported.
+    @html_report_file.puts "<br><br><h1>Kubernetes Cluster Information</h1>"
+    @html_report_file.puts "<br><br><h2>Kubernetes Authentication Options</h2>"
+    @html_report_file.puts "<table><thead><tr><th>Authentication Option</th><th>Enabled?</th></tr></thead>"
+    if @results[@options.target_server]['api_server']['CIS 1.1.2 - Ensure that the --basic-auth-file argument is not set'] == "Fail"
+      @html_report_file.puts "<tr><td>Basic Authentication</td><td>Enabled</td></tr>"
+    else
+      @html_report_file.puts "<tr><td>Basic Authentication</td><td>Disabled</td></tr>"
+    end
+    if @results[@options.target_server]['api_server']['CIS 1.1.20 - Ensure that the --token-auth-file argument is not set'] == "Fail"
+      @html_report_file.puts "<tr><td>Token Authentication</td><td>Enabled</td></tr>"
+    else
+      @html_report_file.puts "<tr><td>Token Authentication</td><td>Disabled</td></tr>"
+    end
+    if @results[@options.target_server]['api_server']['CIS 1.1.29 - Ensure that the --client-ca-file argument is set as appropriate'] == "Pass"
+      @html_report_file.puts "<tr><td>Client Certificate Authentication</td><td>Enabled</td></tr>"
+    else
+      @html_report_file.puts "<tr><td>Client Certificate Authentication</td><td>Disabled</td></tr>"
+    end
+
+    if @results[@options.target_server]['evidence']['API Server'].index{|line| line =~ /--oidc-issuer-url/}
+      @html_report_file.puts "<tr><td>OpenID Connect Authentication</td><td>Enabled</td></tr>"
+    else
+      @html_report_file.puts "<tr><td>OpenID Connect Authentication</td><td>Disabled</td></tr>"
+    end
+
+    if @results[@options.target_server]['evidence']['API Server'].index{|line| line =~ /--authentication-token-webhook-config-file/}
+      @html_report_file.puts "<tr><td>Webhook Authentication</td><td>Enabled</td></tr>"
+    else
+      @html_report_file.puts "<tr><td>Webhook Authentication</td><td>Disabled</td></tr>"
+    end
+
+    if @results[@options.target_server]['evidence']['API Server'].index{|line| line =~ /--requestheader-username-headers/}
+      @html_report_file.puts "<tr><td>Proxy Authentication</td><td>Enabled</td></tr>"
+    else
+      @html_report_file.puts "<tr><td>Proxy Authentication</td><td>Disabled</td></tr>"
+    end
+
+    @html_report_file.puts "</table>"
+
+    #Show what cluster authorization modes are supported.
+    @html_report_file.puts "<br><br>"
+    @html_report_file.puts "<br><br><h2>Kubernetes Authorization Options</h2>"
+    @html_report_file.puts "<table><thead><tr><th>Authorization Option</th><th>Enabled?</th></tr></thead>"
+
+    if @results[@options.target_server]['evidence']['API Server'].index{|line| line =~ /--authorization-mode\S*RBAC/}
+      @html_report_file.puts "<tr><td>Role Based Authorization</td><td>Enabled</td></tr>"
+    else
+      @html_report_file.puts "<tr><td>Role Based Authorization</td><td>Disabled</td></tr>"
+    end
+
+    if @results[@options.target_server]['evidence']['API Server'].index{|line| line =~ /--authorization-mode\S*ABAC/}
+      @html_report_file.puts "<tr><td>Attribute Based Authorization</td><td>Enabled</td></tr>"
+    else
+      @html_report_file.puts "<tr><td>Attribute Based Authorization</td><td>Disabled</td></tr>"
+    end
+
+    if @results[@options.target_server]['evidence']['API Server'].index{|line| line =~ /--authorization-mode\S*Webhook/}
+      @html_report_file.puts "<tr><td>Webhook Authorization</td><td>Enabled</td></tr>"
+    else
+      @html_report_file.puts "<tr><td>Webhook Authorization</td><td>Disabled</td></tr>"
+    end
+
+    @html_report_file.puts "</table>"    
+
+    @html_report_file.puts "<br><br><h2>Evidence</h2><br>"
+    @html_report_file.puts "<table><thead><tr><th>Area</th><th>Output</th></tr></thead>"
+    @results[@options.target_server]['evidence'].each do |area, output|
+      @html_report_file.puts "<tr><td>#{area}</td><td>#{output}</td></tr>"
+    end
+    @html_report_file.puts "</table>"  
+
+    #Only show this section if we were asked to dump the config
+    if @options.dump_config
+      @html_report_file.puts "<br><br>"
+      @html_report_file.puts "<br><br><h2>Cluster Config Information</h2>"
+      @html_report_file.puts "<table><thead><tr><th>Docker Images In Use</th></tr></thead>"
+      @results[@options.target_server][:config][:docker_images].each do |image|
+        @html_report_file.puts "<tr><td>#{image}</td></tr>"
+      end
+      @html_report_file.puts "</table>"
+      @html_report_file.puts "<br><br>"
+      @html_report_file.puts "<table><thead><tr><th>Pod Name</th><th>Namespace</th><th>Service Account</th><th>Host IP</th><th>Pod IP</th></tr></thead>"
+      @results[@options.target_server][:config][:pod_info].each do |pod|
+        @html_report_file.puts "<tr><td>#{pod[:name]}</td><td>#{pod[:namespace]}</td><td>#{pod[:service_account]}</td><td>#{pod[:host_ip]}</td><td>#{pod[:pod_ip]}</td></tr>"
+      end
+      @html_report_file.puts "</table>"
+      @html_report_file.puts "<br><br>"
+      @html_report_file.puts "<br><br>"
+      @html_report_file.puts "<table><thead><tr><th>Service Name</th><th>Cluster IP</th><th>External IP</th><th>Port:Target Port</th></tr></thead>"
+      @results[@options.target_server][:config][:service_info].each do |service|
+
+        @html_report_file.puts "<tr><td>#{service[:name]}</td><td>#{service[:cluster_ip]}</td><td>#{service[:external_ip]}</td><td>#{service[:ports].join('<br>')}</td></tr>"
+      end
+      @html_report_file.puts "</table>"
+      @html_report_file.puts "<br><br>"
+    end
+
+    #Only show this section if we were asked to dump RBAC
+    if @options.audit_rbac
+      @html_report_file.puts "<br><br>"
+      @html_report_file.puts "<br><br><h2>Cluster Role Information</h2>"
+      @html_report_file.puts "<table><thead><tr><th>Name</th><th>Default?</th><th>Subjects</th><th>Rules</th></tr></thead>"
+      @results[@options.target_server][:rbac][:cluster_roles].each do |name, info|
+        subjects = ''
+        info[:subjects].each do |subject|
+          subjects << "#{subject[:kind]}:#{subject[:namespace]}:#{subject[:name]}<br>"
+        end
+        rules = ''
+        info[:rules].each do |rule|
+          unless rule.verbs
+            rule.verbs = Array.new
+          end
+          unless rule.apiGroups
+            rule.apiGroups = Array.new
+          end
+          unless rule.resources
+            rule.resources = Array.new
+          end
+          rules << "Verbs : #{rule.verbs.join(', ')}<br>API Groups : #{rule.apiGroups.join(', ')}<br>Resources : #{rule.resources.join(', ')}<br><hr>"
+        end
+        @html_report_file.puts "<tr><td>#{name}</td><td>#{info[:default]}</td><td>#{subjects}</td><td>#{rules}</td></tr>"
+      end
+      @html_report_file.puts "</table>"
+      @html_report_file.puts "<br><br>"
+    end
 
     #Closing the report off
     @html_report_file.puts '</body></html>'

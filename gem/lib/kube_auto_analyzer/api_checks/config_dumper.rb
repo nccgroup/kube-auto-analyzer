@@ -5,6 +5,7 @@ module KubeAutoAnalyzer
   @log.debug("dumping the config for #{target}")
   @results[target][:config] = Hash.new
   pods = @client.get_pods
+  services = @client.get_services
   docker_images = Array.new
   #Specific requirement here in that it's useful to know what Docker images are in use on the cluster.
   pods.each do |pod|
@@ -25,6 +26,29 @@ module KubeAutoAnalyzer
     currpod[:pod_ip] = pod[:status][:podIP]
     @results[target][:config][:pod_info] << currpod
   end
+
+  @results[target][:config][:service_info] = Array.new
+
+  services.each do |service|
+    currserv = Hash.new
+    currserv[:name] = service.metadata[:name]
+    currserv[:cluster_ip] = service.spec[:clusterIP]
+    if service.spec[:externalIP]
+      currserv[:external_ip] = service.spec[:externalIP]
+    else
+      currserv[:external_ip] = "None"
+    end
+    if service.spec[:ports]
+      currserv[:ports] = Array.new
+      service.spec[:ports].each do |port|
+        currserv[:ports] << "#{port[:port]}/#{port[:protocol]}:#{port[:targetPort]}/#{port[:protocol]}"
+      end
+    else
+      currserv[:ports] = "None"
+    end
+    @results[target][:config][:service_info] << currserv
+  end
+
 
  end
 end
