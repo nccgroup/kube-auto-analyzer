@@ -1,6 +1,6 @@
 # Kubernetes Auto Analyzer
 
-This is a configuration analyzer tool intended to automate the process of reviewing Kubernetes installations against the CIS Kubernetes 1.8 Benchmark.
+This is a configuration analyzer tool intended to automate the process of reviewing Kubernetes installations against the CIS Kubernetes 1.8 Benchmark. We also have some features to dump a cluster's configuration and some basic RBAC information, which could be useful if you're auditing a cluster.
 
 ## Getting Started
 
