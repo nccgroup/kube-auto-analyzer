@@ -18,6 +18,8 @@ module KubeAutoAnalyzer
           pods_resp = RestClient::Request.execute(:url => "http://#{nod}:8080/api",:method => :get)
         rescue RestClient::Forbidden
           pods_resp = "Not Vulnerable - Request Forbidden"
+        rescue RestClient::NotFound
+          pods_resp = "Not Vulnerable - Request Not Found"
         end
         @results[target]['vulns']['insecure_api_external'][nod] = pods_resp
       else
