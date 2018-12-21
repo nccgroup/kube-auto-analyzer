@@ -8,7 +8,7 @@
   options.report_directory = Dir.pwd
   options.report_file = 'kube-parse-report'
   options.target_server = 'http://127.0.0.1:8080'
-  options.html_report = false
+  options.html_report = true
   options.json_report = false
   options.token = ''
   options.token_file = ''
