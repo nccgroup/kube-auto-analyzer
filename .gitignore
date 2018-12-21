@@ -1,9 +1,7 @@
 *.gem
 test*
-admin.conf
-15admin.conf
+*conf
+conf*
 kube-analyzer-log.txt
-16admin.conf
-17admin.conf
 newtest*
 18config

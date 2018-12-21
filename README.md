@@ -50,7 +50,16 @@ If you've got access to the insecure API port and would like to run against that
 
 Running `kubeautoanalyzer` without any switched will provide information on the command line switches available.
 
+#### Additional Options
+
+For the API server based checking there are a couple of additional options which can be supplied to extract additional information from the cluster.
+
+`--dump` - This will dump some additional information out of the cluster, including running pods and services, and Docker images in-use.
+`--rbac` - This is an early stage attempt to provide some inforamtion about the RBAC roles and rolebindings available on the cluster.  At the moment it only does clusterroles and clusterrolebindings, but the intent would be to add namespaced roles and rolebindings in the future.
+
 ## Agent Checks
+
+**Warning: Experimental**
 
 The `--agentChecks` switch will deploy a container onto each node in the cluster to try and complete various checks that need to run from the node. Your cluster need to be able to pull from Docker hub for this to work.
 
