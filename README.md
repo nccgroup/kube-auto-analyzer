@@ -1,6 +1,8 @@
 # Kubernetes Auto Analyzer
 
-This is a configuration analyzer tool intended to automate the process of reviewing Kubernetes installations against the CIS Kubernetes 1.8 Benchmark. We also have some features to dump a cluster's configuration and some basic RBAC information, which could be useful if you're auditing a cluster.
+This is a Kubernetes Security configuration review tool it's designed to automate the process of checking specific items on cluster security.
+
+It also has some ability to audit against the CIS Kubernetes benchmark, however this isn't really mantained at the moment, so if this is a feature you need, consider checking out [Aqua's Kube-Bench](https://github.com/aquasecurity/kube-bench)
 
 ## Getting Started
 
@@ -32,23 +34,25 @@ To install the ruby gem , just do `gem install kube_auto_analyzer` and that shou
 
 #### Operation
 
+By default the analyzer will check enabled authentication and authorization mechanisms, check a couple of common vulnerabilities and then create an HTML report.  There are other options to make things more useful, which are detailed below.
+
 The best way to use the tool is to provide it a KUBECONFIG file to identify and authenticate the session.  in that event you can run it with
 
-`kubeautoanalyzer -c <kubeconfig_file_name> -r <report_name> --html`
+`kubeautoanalyzer -c <kubeconfig_file_name> -r <report_name> `
 
 If there are multiple contexts in your Kubeconfig file and you don't want to use the one specified as "current-context" then you can specify one on the commmand line with
 
-`kubeautoanalyzer -c <kubeconfig_file_name> --context=<context_name> -r <report_name> --html`
+`kubeautoanalyzer -c <kubeconfig_file_name> --context=<context_name> -r <report_name>`
 
 If you've got an authorisation token for the system (e.g. with many Kubernetes 1.5 or earlier installs) you can run with
 
-`kubeautoanalyzer -s https://<API_SERVER_IP>:<API_SERVER_PORT> -t <TOKEN> -r <report_name> --html`
+`kubeautoanalyzer -s https://<API_SERVER_IP>:<API_SERVER_PORT> -t <TOKEN> -r <report_name>`
 
 If you've got access to the insecure API port and would like to run against that, you can run with
 
-`kubeautoanalyzer -s http://<API_SERVER_IP>:<INSECURE_PORT> -i -r <report_name> --html`
+`kubeautoanalyzer -s http://<API_SERVER_IP>:<INSECURE_PORT> -i -r <report_name>`
 
-Running `kubeautoanalyzer` without any switched will provide information on the command line switches available.
+Running `kubeautoanalyzer` without any switches will provide information on the command line switches available.
 
 #### Additional Options
 
@@ -56,6 +60,10 @@ For the API server based checking there are a couple of additional options which
 
 `--dump` - This will dump some additional information out of the cluster, including running pods and services, and Docker images in-use.
 `--rbac` - This is an early stage attempt to provide some inforamtion about the RBAC roles and rolebindings available on the cluster.  At the moment it only does clusterroles and clusterrolebindings, but the intent would be to add namespaced roles and rolebindings in the future.
+
+#### CIS Audit
+
+If you want to do some CIS audit checks against the server (carried out at the Kubernetes 1.8 version of the standard), add `-a` or `--audit` to the command line.
 
 ## Agent Checks
 
@@ -81,27 +89,6 @@ In addition to that we've got an agent based approach for checks on the nodes, l
 
 One of the challenges with scripting these checks is that there are many different Kubernetes distributions, and each one does things differently, so implementing a generic script that covers them all would be tricky.  We're working off kubeadm as a base, but ideally we'll get it working with as many distributions as possible.
 
-## Coverage
-
-### Master Node Security Configuration
-
- - Section 1.1 - API Server - All bar one Checks Implemented (34)
- - Section 1.2 - Scheduler - All Checks Implemented (1)
- - Section 1.3 - Controller Manager - All Checks Implemented (6)
- - Section 1.4 - Configuration Files - Basic Coverage implemented via kaa-agent.
- - Section 1.5 - etcd - All bar one Checks Implemented (8)
- - Section 1.6 - General Security Primitives - Not implementing directly.  These checks are unscored so not really suitable for automated scanning.
-
-### Worker Node Security Configuration
-
- - Section 2.1 - API Config - kubelet checks in place via kaa-agent
- - Section 2.2 - Configuration Files - Basic coverage implemented via kaa-agent.  At the moment we're providing information about file permissions back to the report as there's a lot of variety of locations and file names, it doesn't make a lot of sense to try and actually checking them to provide a pass/fail.
-
-### Federated Deployments
-
- - Section 3.1 - Federation API Server - TBC
- - Section 3.2 - Federation Controller Manager - TBC
-
 ### Additional Vulnerability Checks
 
 We're starting to implement checks for common Kubernetes vulnerabilities.  Some of these can be derived from the CIS compliance checks, but in order to get more of a chance of picking them up, we're implementing direct checks as well.
@@ -113,7 +100,7 @@ We're starting to implement checks for common Kubernetes vulnerabilities.  Some 
 
 ## Tested With
 
- - Kubeadm 1.5,1.6,1.7 - Works ok  
+ - Kubeadm 1.5,1.6,1.7,1.13 - Works ok  
  - kube-aws - Works ok
  - kismatic - Works ok
  - GCE - Doesn't really work at all.  GCE doesn't run the control plane components as pods, so we can't use this approach.
@@ -123,8 +110,5 @@ The switch for adding agent based checking is `--agentChecks` .  If you run usin
 
 ## TODO
 
- - Add check on authorization modes explicitly
  - Add RBAC roles so we don't just assume cluster admin for running.
  - Getting to the point where it would be worth some re-factoring to reduce duplication.  specifically abstract common routines like container creation, consistency in variable use etc.
- - Updated visuals to do a red/green for the vuln checks
- - 
