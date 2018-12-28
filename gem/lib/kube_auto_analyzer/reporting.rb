@@ -380,35 +380,35 @@ module KubeAutoAnalyzer
     @html_report_file.puts "<br><br><h1>Kubernetes Cluster Information</h1>"
     @html_report_file.puts "<br><br><h2>Kubernetes Authentication Options</h2>"
     @html_report_file.puts "<table><thead><tr><th>Authentication Option</th><th>Enabled?</th></tr></thead>"
-    if @results[@options.target_server]['api_server']['CIS 1.1.2 - Ensure that the --basic-auth-file argument is not set'] == "Fail"
+    if @results[@options.target_server][:authn][:basic] = true
       @html_report_file.puts "<tr><td>Basic Authentication</td><td>Enabled</td></tr>"
     else
       @html_report_file.puts "<tr><td>Basic Authentication</td><td>Disabled</td></tr>"
     end
-    if @results[@options.target_server]['api_server']['CIS 1.1.20 - Ensure that the --token-auth-file argument is not set'] == "Fail"
+    if @results[@options.target_server][:authn][:token] = true
       @html_report_file.puts "<tr><td>Token Authentication</td><td>Enabled</td></tr>"
     else
       @html_report_file.puts "<tr><td>Token Authentication</td><td>Disabled</td></tr>"
     end
-    if @results[@options.target_server]['api_server']['CIS 1.1.29 - Ensure that the --client-ca-file argument is set as appropriate'] == "Pass"
+    if @results[@options.target_server][:authn][:certificate] = true
       @html_report_file.puts "<tr><td>Client Certificate Authentication</td><td>Enabled</td></tr>"
     else
       @html_report_file.puts "<tr><td>Client Certificate Authentication</td><td>Disabled</td></tr>"
     end
 
-    if @results[@options.target_server]['evidence']['API Server'].index{|line| line =~ /--oidc-issuer-url/}
+    if @results[@options.target_server][:authn][:oidc] = true
       @html_report_file.puts "<tr><td>OpenID Connect Authentication</td><td>Enabled</td></tr>"
     else
       @html_report_file.puts "<tr><td>OpenID Connect Authentication</td><td>Disabled</td></tr>"
     end
 
-    if @results[@options.target_server]['evidence']['API Server'].index{|line| line =~ /--authentication-token-webhook-config-file/}
+    if @results[@options.target_server][:authn][:webhook] = true
       @html_report_file.puts "<tr><td>Webhook Authentication</td><td>Enabled</td></tr>"
     else
       @html_report_file.puts "<tr><td>Webhook Authentication</td><td>Disabled</td></tr>"
     end
 
-    if @results[@options.target_server]['evidence']['API Server'].index{|line| line =~ /--requestheader-username-headers/}
+    if @results[@options.target_server][:authn][:proxy] = true
       @html_report_file.puts "<tr><td>Proxy Authentication</td><td>Enabled</td></tr>"
     else
       @html_report_file.puts "<tr><td>Proxy Authentication</td><td>Disabled</td></tr>"
