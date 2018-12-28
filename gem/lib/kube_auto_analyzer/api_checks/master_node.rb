@@ -5,7 +5,6 @@ module KubeAutoAnalyzer
     target = @options.target_server
     @log.debug("target is #{target}")
     @results[target]['api_server'] = Hash.new
-    @results[target]['evidence'] = Hash.new
     pods = @client.get_pods
     pods.each do |pod| 
       #Ok this is a bit naive as a means of hitting the API server but hey it's a start
@@ -246,7 +245,7 @@ module KubeAutoAnalyzer
 
     #1.1.37 This one is dubious for a pass/fail test as the value should be evaluated against the relity of the cluster.
 
-    @results[target]['evidence']['API Server'] = api_server_command_line
+    
   end
 
   def self.test_scheduler

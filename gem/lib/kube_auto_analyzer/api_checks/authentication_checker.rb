@@ -4,6 +4,7 @@ module KubeAutoAnalyzer
     target = @options.target_server
     @log.debug("Checking enabled Authentication Options on #{target}")
     @results[target][:authn] = Hash.new
+    @results[target]['evidence'] = Hash.new
     pods = @client.get_pods
     pods.each do |pod|
       if pod['metadata']['name'] =~ /kube-apiserver/
@@ -47,5 +48,7 @@ module KubeAutoAnalyzer
     else
       @results[target][:authn][:proxy] = false
     end
+    #Gather evidence for the API server
+    @results[target]['evidence']['API Server'] = api_server_command_line
   end
 end

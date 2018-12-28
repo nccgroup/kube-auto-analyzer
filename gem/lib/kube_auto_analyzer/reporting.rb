@@ -71,6 +71,9 @@ module KubeAutoAnalyzer
   <body>
   
     '
+    @html_report_file.puts '<img width="100" height="100" align="right"' + " src=#{logo} />"
+    @html_report_file.puts "<h1>Kubernetes Auto Analyzer</h1>"
+    @html_report_file.puts "<br><b>Server Reviewed : </b> #{@options.target_server}"
     if @options.cis_audit
       chartkick_path = File.join(__dir__, "js_files/chartkick.js")
       chartkick = File.open(chartkick_path).read
@@ -78,9 +81,6 @@ module KubeAutoAnalyzer
       highcharts = File.open(highcharts_path).read
       @html_report_file.puts "<script>#{chartkick}</script>"
       @html_report_file.puts "<script>#{highcharts}</script>"
-      @html_report_file.puts '<img width="100" height="100" align="right"' + " src=#{logo} />"
-      @html_report_file.puts "<h1>Kubernetes Auto Analyzer</h1>"
-      @html_report_file.puts "<br><b>Server Reviewed : </b> #{@options.target_server}"
       @html_report_file.puts '<br><br><div class="master-node"><h2>Master Node Results</h2><br>'
       #Charting setup counts for the passes and fails
       api_server_pass = 0
@@ -380,35 +380,35 @@ module KubeAutoAnalyzer
     @html_report_file.puts "<br><br><h1>Kubernetes Cluster Information</h1>"
     @html_report_file.puts "<br><br><h2>Kubernetes Authentication Options</h2>"
     @html_report_file.puts "<table><thead><tr><th>Authentication Option</th><th>Enabled?</th></tr></thead>"
-    if @results[@options.target_server][:authn][:basic] = true
+    if @results[@options.target_server][:authn][:basic] == true
       @html_report_file.puts "<tr><td>Basic Authentication</td><td>Enabled</td></tr>"
     else
       @html_report_file.puts "<tr><td>Basic Authentication</td><td>Disabled</td></tr>"
     end
-    if @results[@options.target_server][:authn][:token] = true
+    if @results[@options.target_server][:authn][:token] == true
       @html_report_file.puts "<tr><td>Token Authentication</td><td>Enabled</td></tr>"
     else
       @html_report_file.puts "<tr><td>Token Authentication</td><td>Disabled</td></tr>"
     end
-    if @results[@options.target_server][:authn][:certificate] = true
+    if @results[@options.target_server][:authn][:certificate] == true
       @html_report_file.puts "<tr><td>Client Certificate Authentication</td><td>Enabled</td></tr>"
     else
       @html_report_file.puts "<tr><td>Client Certificate Authentication</td><td>Disabled</td></tr>"
     end
 
-    if @results[@options.target_server][:authn][:oidc] = true
+    if @results[@options.target_server][:authn][:oidc] == true
       @html_report_file.puts "<tr><td>OpenID Connect Authentication</td><td>Enabled</td></tr>"
     else
       @html_report_file.puts "<tr><td>OpenID Connect Authentication</td><td>Disabled</td></tr>"
     end
 
-    if @results[@options.target_server][:authn][:webhook] = true
+    if @results[@options.target_server][:authn][:webhook] == true
       @html_report_file.puts "<tr><td>Webhook Authentication</td><td>Enabled</td></tr>"
     else
       @html_report_file.puts "<tr><td>Webhook Authentication</td><td>Disabled</td></tr>"
     end
 
-    if @results[@options.target_server][:authn][:proxy] = true
+    if @results[@options.target_server][:authn][:proxy] == true
       @html_report_file.puts "<tr><td>Proxy Authentication</td><td>Enabled</td></tr>"
     else
       @html_report_file.puts "<tr><td>Proxy Authentication</td><td>Disabled</td></tr>"
@@ -421,19 +421,19 @@ module KubeAutoAnalyzer
     @html_report_file.puts "<br><br><h2>Kubernetes Authorization Options</h2>"
     @html_report_file.puts "<table><thead><tr><th>Authorization Option</th><th>Enabled?</th></tr></thead>"
 
-    if @results[@options.target_server][:authz][:rbac] = true
+    if @results[@options.target_server][:authz][:rbac] == true
       @html_report_file.puts "<tr><td>Role Based Authorization</td><td>Enabled</td></tr>"
     else
       @html_report_file.puts "<tr><td>Role Based Authorization</td><td>Disabled</td></tr>"
     end
 
-    if @results[@options.target_server][:authz][:abac] = true
+    if @results[@options.target_server][:authz][:abac] == true
       @html_report_file.puts "<tr><td>Attribute Based Authorization</td><td>Enabled</td></tr>"
     else
       @html_report_file.puts "<tr><td>Attribute Based Authorization</td><td>Disabled</td></tr>"
     end
 
-    if @results[@options.target_server][:authz][:webhook] = true
+    if @results[@options.target_server][:authz][:webhook] == true
       @html_report_file.puts "<tr><td>Webhook Authorization</td><td>Enabled</td></tr>"
     else
       @html_report_file.puts "<tr><td>Webhook Authorization</td><td>Disabled</td></tr>"
