@@ -19,10 +19,11 @@
   options.nosslverify = false
   options.dump_config = false
   options.audit_rbac = false
+  options.cluster_version = '1.11'
+  options.cis_audit = false
 
   opts = OptionParser.new do |opts|
     opts.banner = "Kubernetes Auto Analyzer #{KubeAutoAnalyzer::VERSION}"
-
 
 
     #TODO: Need options for different authentication mechanisms      
@@ -56,6 +57,10 @@
 
     opts.on("-t", "--token [TOKEN]", "Bearer Token to Use") do |token|
       options.token = token
+    end
+
+    opts.on("-a", "--audit [AUDIT]", "CIS Audit against 1.8 Standard") do |audit|
+      options.cis_audit = true
     end
 
     opts.on("-j", "--json", "Create a JSON report") do |json|

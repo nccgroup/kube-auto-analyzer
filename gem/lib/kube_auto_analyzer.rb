@@ -122,18 +122,22 @@ module KubeAutoAnalyzer
       puts "to see what's going wrong."
       exit
     end
-    test_api_server
-    test_scheduler
-    test_controller_manager
-    test_etcd
+    if @options.cis_audit
+      test_api_server
+      test_scheduler
+      test_controller_manager
+      test_etcd
+    end
     test_unauth_kubelet_external
     test_insecure_api_external
     if @options.agent_checks
       test_unauth_kubelet_internal
       test_insecure_api_internal
       test_service_token_internal
-      check_files
-      check_kubelet_process
+      if @options.cis_audit
+        check_files
+        check_kubelet_process
+      end
       check_amicontained
     end
     if @options.dump_config
