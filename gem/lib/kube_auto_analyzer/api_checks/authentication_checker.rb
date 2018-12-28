@@ -8,6 +8,7 @@ module KubeAutoAnalyzer
     pods.each do |pod|
       if pod['metadata']['name'] =~ /kube-apiserver/
         @api_server = pod
+      end
     end
 
     api_server_command_line = @api_server['spec']['containers'][0]['command']

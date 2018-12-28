@@ -421,19 +421,19 @@ module KubeAutoAnalyzer
     @html_report_file.puts "<br><br><h2>Kubernetes Authorization Options</h2>"
     @html_report_file.puts "<table><thead><tr><th>Authorization Option</th><th>Enabled?</th></tr></thead>"
 
-    if @results[@options.target_server]['evidence']['API Server'].index{|line| line =~ /--authorization-mode\S*RBAC/}
+    if @results[@options.target_server][:authz][:rbac] = true
       @html_report_file.puts "<tr><td>Role Based Authorization</td><td>Enabled</td></tr>"
     else
       @html_report_file.puts "<tr><td>Role Based Authorization</td><td>Disabled</td></tr>"
     end
 
-    if @results[@options.target_server]['evidence']['API Server'].index{|line| line =~ /--authorization-mode\S*ABAC/}
+    if @results[@options.target_server][:authz][:abac] = true
       @html_report_file.puts "<tr><td>Attribute Based Authorization</td><td>Enabled</td></tr>"
     else
       @html_report_file.puts "<tr><td>Attribute Based Authorization</td><td>Disabled</td></tr>"
     end
 
-    if @results[@options.target_server]['evidence']['API Server'].index{|line| line =~ /--authorization-mode\S*Webhook/}
+    if @results[@options.target_server][:authz][:webhook] = true
       @html_report_file.puts "<tr><td>Webhook Authorization</td><td>Enabled</td></tr>"
     else
       @html_report_file.puts "<tr><td>Webhook Authorization</td><td>Disabled</td></tr>"

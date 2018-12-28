@@ -5,6 +5,7 @@ module KubeAutoAnalyzer
   require "kube_auto_analyzer/api_checks/config_dumper"
   require "kube_auto_analyzer/api_checks/rbac_auditor"
   require "kube_auto_analyzer/api_checks/authentication_checker"
+  require "kube_auto_analyzer/api_checks/authorization_checker"
   require "kube_auto_analyzer/reporting"
   require "kube_auto_analyzer/agent_checks/file_checks"
   require "kube_auto_analyzer/agent_checks/process_checks"
@@ -130,6 +131,7 @@ module KubeAutoAnalyzer
       test_etcd
     end
     check_authn
+    check_authz
     test_unauth_kubelet_external
     test_insecure_api_external
     if @options.agent_checks
