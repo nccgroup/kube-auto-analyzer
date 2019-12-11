@@ -1,3 +1,7 @@
+# Archived
+
+This project is not under active development at the moment and hasn't been updated in some time, so has been archived. Consider using [Aqua's Kube-Bench](https://github.com/aquasecurity/kube-bench) and/or [kube-hunter](https://github.com/aquasecurity/kube-hunter) to achieve similar goals.
+
 # Kubernetes Auto Analyzer
 
 This is a Kubernetes Security configuration review tool it's designed to automate the process of checking specific items on cluster security.
